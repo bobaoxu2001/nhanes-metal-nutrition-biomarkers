@@ -18,7 +18,7 @@
 
 4. **Public availability:** All NHANES data are freely available at https://wwwn.cdc.gov/nchs/nhanes/ without data use restrictions, enabling transparent and reproducible science.
 
-5. **Pre-pandemic 2017–March 2020 data:** Using cycles with the `_P` (pre-pandemic) designation avoids the confounding effects of COVID-19 on health behaviors, metal exposures (e.g., reduced industrial activity), and healthcare access during 2020–2021.
+5. **Pre-pandemic 2017–2018 cycle:** This analysis uses the 2017–2018 cycle (`_J` files), the most recent fully-released NHANES cycle that pre-dates COVID-19. Restricting to 2017–2018 avoids the confounding effects of pandemic-era disruptions in health behavior, exposure patterns, and healthcare access.
 
 **Limitations of NHANES for this question:**
 - Cross-sectional: cannot establish temporality
@@ -78,22 +78,15 @@ NHANES sampling is designed so that no individual represents only themselves —
 
 **Our approach:**
 
-### Combined 4-year weights
-When combining 2017–2018 and 2019–March 2020:
-
-$$w_{combined} = \frac{w_{original}}{n_{cycles}} = \frac{w_{original}}{2}$$
-
-- 2017–2018: `wt_combined = WTMEC2YR / 2`
-- 2019–March 2020: `wt_combined = WTMECPRP / 2`
-
-This is the NCHS-recommended approach for pooling cycles. The pre-pandemic weight `WTMECPRP` was specifically constructed by NCHS to account for the truncated 2019–2020 data collection.
+### 2-year weights (single cycle)
+This analysis uses a single NHANES cycle (2017–2018), so the 2-year MEC examination weight `WTMEC2YR` is used directly without pooling adjustment, per NCHS analytic guidelines.
 
 ### Survey design object (R)
 ```r
 svydesign(
-  ids     = ~psu,        # primary sampling unit
-  strata  = ~strata,     # masked stratum
-  weights = ~wt_mec,     # combined weight
+  ids     = ~psu,        # primary sampling unit (SDMVPSU)
+  strata  = ~strata,     # masked stratum (SDMVSTRA)
+  weights = ~wt_mec,     # WTMEC2YR
   data    = dat,
   nest    = TRUE          # PSUs nested within strata
 )
@@ -156,20 +149,24 @@ A cross-sectional survey measures exposure and outcome at the same point in time
 
 ---
 
-## 8. NHANES File Structure Reference
+## 8. NHANES File Structure Reference (cycle 2017–2018)
 
-| NHANES Component | File Prefix | 2017–2018 | 2019–Mar 2020 |
-|-----------------|-------------|-----------|---------------|
-| Demographics | DEMO | DEMO_J | DEMO_P |
-| Blood metals | PBCD | PBCD_J | PBCD_P |
-| Glycohemoglobin | GHB | GHB_J | GHB_P |
-| C-reactive protein | CRP | CRP_J | CRP_P |
-| Total cholesterol | TCHOL | TCHOL_J | TCHOL_P |
-| HDL cholesterol | HDL | HDL_J | HDL_P |
-| Blood pressure | BPX/BPXO | BPX_J | BPXO_P |
-| BP questionnaire | BPQ | BPQ_J | BPQ_P |
-| Body measures | BMX | BMX_J | BMX_P |
-| Dietary recall D1 | DR1TOT | DR1TOT_J | DR1TOT_P |
-| Smoking | SMQ | SMQ_J | SMQ_P |
+| NHANES Component | File |
+|-----------------|------|
+| Demographics | `DEMO_J` |
+| Blood metals | `PBCD_J` |
+| Glycohemoglobin | `GHB_J` |
+| High-sensitivity C-reactive protein | `HSCRP_J` |
+| Total cholesterol | `TCHOL_J` |
+| HDL cholesterol | `HDL_J` |
+| Blood pressure (auscultatory) | `BPX_J` |
+| BP questionnaire | `BPQ_J` |
+| Body measures | `BMX_J` |
+| Dietary recall, Day 1 | `DR1TOT_J` |
+| Smoking | `SMQ_J` |
 
-**Note:** The blood pressure file changed from auscultatory (BPX_J) to oscillometric (BPXO_P) between cycles. Both measure systolic and diastolic BP in mmHg; however, oscillometric readings from BPXO_P may be systematically slightly different from auscultatory readings. This is documented in the NHANES analytic note for the 2019–2020 cycle. For descriptive purposes this harmonization is acceptable; for clinical cutpoint analyses, this should be flagged.
+**Note on CRP:** For 2017–2018 the standard CRP file is `HSCRP_J` (high-sensitivity CRP, variable `LBXHSCRP` in mg/L). The earlier `CRP_J` file does not exist for this cycle. We convert mg/L → mg/dL by multiplying by 0.1 to maintain comparability with earlier-cycle CRP units.
+
+## 9. Data Acquisition
+
+The CRAN `nhanesA` 0.7.x package was found to construct malformed URLs for certain cycle-J files at the time of analysis. To make the pipeline robust we bypass `nhanesA` entirely and download `.XPT` files directly from `https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/` using `curl` (180 s timeout, 3 retries) with `download.file()` as a fallback, then read them via `haven::read_xpt()` and cache as `.rds` in `data/raw/`. See `R/01_download_data.R`.

@@ -1,6 +1,6 @@
 ---
 title: "Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers"
-subtitle: "A Reproducible Cross-Sectional Analysis of NHANES 2017–March 2020"
+subtitle: "A Reproducible Cross-Sectional Analysis of NHANES 2017–2018"
 author:
   - name: "Ao Xu"
     affiliation: "New York University"
@@ -87,7 +87,7 @@ sens_results   <- read_csv(here("outputs", "tables", "sensitivity_all_metals_hba
 
 **Background:** Environmental exposures to heavy metals such as lead, cadmium, and mercury are ubiquitous in the U.S. population and may contribute to cardiometabolic dysregulation. Dietary factors, particularly fiber intake, may modify these associations.
 
-**Methods:** We analyzed data from `r nrow(dat)` U.S. adults aged ≥20 years from the National Health and Nutrition Examination Survey (NHANES) 2017–March 2020 pre-pandemic cycles. Blood lead, cadmium, and total mercury were the primary exposures. HbA1c was the primary continuous outcome; elevated HbA1c (≥5.7%) was the binary outcome. Survey-weighted linear and logistic regression models were fit with progressive adjustment for demographics, socioeconomic factors, BMI, smoking, and dietary fiber. An interaction term (blood lead × dietary fiber) was evaluated.
+**Methods:** We analyzed data from `r nrow(dat)` U.S. adults aged ≥20 years from the National Health and Nutrition Examination Survey (NHANES) 2017–2018. Blood lead, cadmium, and total mercury were the primary exposures. HbA1c was the primary continuous outcome; elevated HbA1c (≥5.7%) was the binary outcome. Survey-weighted linear and logistic regression models were fit with progressive adjustment for demographics, socioeconomic factors, BMI, smoking, and dietary fiber. An interaction term (blood lead × dietary fiber) was evaluated.
 
 **Results:** The analytic sample comprised `r nrow(dat)` participants (weighted to represent approximately 177 million U.S. adults). Geometric mean blood lead was `r round(exp(mean(dat$log_lead, na.rm=TRUE)), 2)` µg/dL. In fully adjusted models, each 1-unit increase in log-transformed blood lead was associated with a β = `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$estimate, 3)` (95% CI: `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$conf.low, 3)`, `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$conf.high, 3)`) change in HbA1c (%). Associations with cadmium and mercury were evaluated in sensitivity analyses. The interaction term for lead × dietary fiber was assessed.
 
@@ -115,14 +115,13 @@ HbA1c (glycated hemoglobin) is an established biomarker of average glycemia over
 
 This analysis uses publicly available data from the **National Health and Nutrition Examination Survey (NHANES)**, a continuous cross-sectional survey conducted by the National Center for Health Statistics (NCHS) of the U.S. Centers for Disease Control and Prevention (CDC). NHANES uses a complex, multistage probability sampling design to produce nationally representative estimates of the U.S. civilian, non-institutionalized population.
 
-We combined two consecutive NHANES cycles:
+We used the **NHANES 2017–2018** cycle:
 
 | Cycle | Suffix | N (all ages) | Weight Variable |
 |-------|--------|--------------|-----------------|
-| 2017–2018 | `_J` | ~9,254 | `WTMEC2YR` |
-| 2019–March 2020 (pre-pandemic) | `_P` | ~4,423 | `WTMECPRP` |
+| 2017–2018 | `_J` | 9,254 | `WTMEC2YR` |
 
-Data were accessed using the `nhanesA` R package, which queries the CDC public data API. All data files are available at: [https://wwwn.cdc.gov/nchs/nhanes/](https://wwwn.cdc.gov/nchs/nhanes/).
+Data files were downloaded directly from the CDC NHANES public repository. All data files are available at: [https://wwwn.cdc.gov/nchs/nhanes/](https://wwwn.cdc.gov/nchs/nhanes/).
 
 ## Study Population
 
@@ -137,7 +136,7 @@ kable(excl,
                 full_width = FALSE)
 ```
 
-The final analytic sample comprised **`r scales::comma(nrow(dat))`** U.S. adults aged ≥20 years with available blood metal and HbA1c measurements across NHANES 2017–March 2020.
+The final analytic sample comprised **`r scales::comma(nrow(dat))`** U.S. adults aged ≥20 years with available blood metal and HbA1c measurements across NHANES 2017–2018.
 
 ## Variables
 
@@ -147,9 +146,9 @@ Blood metals were measured by the NHANES Mobile Examination Center (MEC) using i
 
 | Variable | NHANES Name | Unit | File |
 |----------|-------------|------|------|
-| Blood lead | `LBXBPB` | µg/dL | PBCD_J, PBCD_P |
-| Blood cadmium | `LBXBCD` | µg/dL | PBCD_J, PBCD_P |
-| Blood total mercury | `LBXTHG` | µg/L | PBCD_J, PBCD_P |
+| Blood lead | `LBXBPB` | µg/dL | PBCD_J |
+| Blood cadmium | `LBXBCD` | µg/dL | PBCD_J |
+| Blood total mercury | `LBXTHG` | µg/L | PBCD_J |
 
 All exposures were **log-transformed** (natural log) prior to analysis to reduce right skewness and facilitate interpretation of a one-unit change on the log scale as a multiplicative effect on the original scale. Values ≤0 were set to missing (<0.01% of observations).
 
@@ -179,9 +178,7 @@ Dietary fiber (g/day) was derived from the **Day 1 24-hour dietary recall** (DR1
 
 All analyses were conducted in **R** (version ≥4.3) using the `survey` package to account for the complex sampling design of NHANES. Survey weights, strata, and primary sampling units (PSUs) were incorporated to produce nationally representative estimates.
 
-**Combined 4-year weight:** For analyses combining the 2017–2018 and 2019–March 2020 cycles, the combined weight was computed as:
-$$w_{combined} = w_{original} / 2$$
-where the denominator equals the number of cycles combined (2), per NCHS analytic guidelines.
+**Survey weight:** The 2-year MEC examination weight (`WTMEC2YR`) was used directly, as this analysis covers a single NHANES cycle (2017–2018), per NCHS analytic guidelines.
 
 **Regression models:** Four sequential models were fit for the primary analysis (log blood lead → HbA1c):
 
@@ -221,7 +218,7 @@ kable(pkg_tbl) |>
 
 ```{r table1}
 #| label: tbl-table1
-#| tbl-cap: "Table 1. Characteristics of Analytic Sample (NHANES 2017–March 2020)"
+#| tbl-cap: "Table 1. Characteristics of Analytic Sample (NHANES 2017–2018)"
 
 # Recreate Table 1 in-document
 table1_vars <- c("age", "sex", "race_eth", "educ", "pir_cat", "smoke_status",
@@ -281,16 +278,13 @@ miss_vars <- c("blood_lead", "blood_cad", "blood_hg", "hba1c",
                "fiber_g", "vitc_mg", "energy_kcal")
 miss_vars <- intersect(miss_vars, names(dat))
 
-dat |>
-  summarise(across(all_of(miss_vars),
-                   list(n_miss = ~ sum(is.na(.)),
-                        pct    = ~ round(mean(is.na(.)) * 100, 1)))) |>
-  pivot_longer(everything(),
-               names_to  = c("Variable", ".value"),
-               names_sep = "_(?=[^_]+$)") |>
-  mutate(N_complete = nrow(dat) - n_miss) |>
-  arrange(desc(pct)) |>
-  rename(`N Missing` = n_miss, `% Missing` = pct, `N Complete` = N_complete) |>
+tibble(
+  Variable    = miss_vars,
+  `N Missing` = sapply(dat[miss_vars], function(x) sum(is.na(x))),
+  `% Missing` = sapply(dat[miss_vars], function(x) round(mean(is.na(x)) * 100, 1)),
+  `N Complete` = nrow(dat) - sapply(dat[miss_vars], function(x) sum(is.na(x)))
+) |>
+  arrange(desc(`% Missing`)) |>
   kable(format.args = list(big.mark = ",")) |>
   kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
@@ -472,7 +466,7 @@ The interaction analysis examined whether dietary fiber modified the lead-HbA1c 
 
 4. **Unmeasured confounders:** Occupational exposures, co-exposures to other metals or pollutants, physical activity, medication use (other than antihypertensives), and dietary supplement use were not fully adjusted for.
 
-5. **Survey weights and pooling:** Combining two NHANES cycles with halved weights is the NCHS-recommended approach, but the pre-pandemic 2019–March 2020 sample is shorter and weights differ structurally.
+5. **Single cycle:** This analysis uses only NHANES 2017–2018 (one 2-year cycle). Results may not generalize to more recent periods; pooling additional cycles in future work could improve precision and temporal scope.
 
 6. **Missing data:** Complete-case analysis was used, which assumes missing at random and may introduce selection bias if missingness is informative.
 

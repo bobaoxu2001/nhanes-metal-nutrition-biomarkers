@@ -1,0 +1,4 @@
+exposure,model,estimate,std.error,conf.low,conf.high,p.value
+Blood cadmium,Fully adjusted,-0.0459,0.0318,-0.1136,0.0218,0.1692
+Blood mercury,Fully adjusted,-0.0287,0.0099,-0.0498,-0.0076,0.0109
+Blood lead,Fully adjusted,-0.2137,0.0299,-0.2773,-0.1501,0

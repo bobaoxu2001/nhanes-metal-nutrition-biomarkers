@@ -1,302 +1,241 @@
 # =============================================================================
 # 02_clean_merge_data.R
 # Project: Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers
-# Purpose: Load raw NHANES files, harmonize across cycles, merge by SEQN,
-#          apply exclusions, and save analysis-ready dataset
+# Purpose: Load NHANES 2017-2018 raw files, merge by SEQN, apply exclusions,
+#          and save analysis-ready dataset.
+#
+# NOTE: Single-cycle (2017-2018 only). WTMEC2YR used directly as survey weight
+#       (no division needed for single cycle).
+# NOTE: CRP variable is LBXHSCRP (mg/L) from HSCRP_J, not LBXCRP.
+#       LBXHSCRP is the high-sensitivity CRP assay; results are mg/L.
+#       We convert to mg/dL (* 0.1) for consistency with prior NHANES analyses.
 # =============================================================================
 
 source(here::here("R", "00_setup.R"))
 
-message("=== 02_clean_merge_data.R: starting data merge ===\n")
+message("=== 02_clean_merge_data.R: merging NHANES 2017-2018 ===\n")
 
 # -----------------------------------------------------------------------------
-# Helper: load raw table; stop with informative error if missing
+# Helper: load raw .rds with informative error
+# Haven imports data with labelled class; we strip labels for clean numerics
 # -----------------------------------------------------------------------------
 load_raw <- function(table_name) {
   path <- file.path(dir_raw, paste0(table_name, ".rds"))
   if (!file.exists(path)) {
-    stop(glue(
-      "Raw file not found: {path}\n",
-      "Run 01_download_data.R first, or manually download and save as RDS."
-    ))
+    stop(glue("Raw file not found: {path}\nRun 01_download_data.R first."))
   }
-  readRDS(path) |>
-    janitor::clean_names() |>
-    as_tibble()
+  dat <- readRDS(path) |>
+    as_tibble() |>
+    # Strip haven_labelled class so numeric operations work correctly
+    mutate(across(where(haven::is.labelled), haven::zap_labels))
+  message(glue("  Loaded {table_name}: {nrow(dat)} rows x {ncol(dat)} cols"))
+  dat
 }
 
 # =============================================================================
-# 1. Load and harmonize 2017-2018 (_J) files
+# 1. Load all files
 # =============================================================================
-message("--- Loading 2017-2018 (cycle J) ---")
+message("--- Loading NHANES 2017-2018 files ---")
 
-demo_j   <- load_raw("DEMO_J")
-metals_j <- load_raw("PBCD_J")
-ghb_j    <- load_raw("GHB_J")
-crp_j    <- load_raw("CRP_J")
-tchol_j  <- load_raw("TCHOL_J")
-hdl_j    <- load_raw("HDL_J")
-bpx_j    <- load_raw("BPX_J")
-bpq_j    <- load_raw("BPQ_J")
-bmx_j    <- load_raw("BMX_J")
-diet_j   <- load_raw("DR1TOT_J")
-smq_j    <- load_raw("SMQ_J")
+demo  <- load_raw("DEMO_J")
+pbcd  <- load_raw("PBCD_J")
+hscrp <- load_raw("HSCRP_J")
+ghb   <- load_raw("GHB_J")
+tchol <- load_raw("TCHOL_J")
+hdl   <- load_raw("HDL_J")
+bpx   <- load_raw("BPX_J")
+bpq   <- load_raw("BPQ_J")
+bmx   <- load_raw("BMX_J")
+diet  <- load_raw("DR1TOT_J")
+smq   <- load_raw("SMQ_J")
 
-# Blood pressure: average available readings
-# BPX_J uses BPXSY1/2/3 and BPXDI1/2/3
-bpx_j <- bpx_j |>
+# =============================================================================
+# 2. Pre-process individual files
+# =============================================================================
+message("\n--- Pre-processing files ---")
+
+# Blood pressure: row-mean of readings (ignore 0s which encode missing in BPX)
+bpx_clean <- bpx |>
   mutate(
-    sbp_mean = rowmean_na(bpxsy1, bpxsy2, bpxsy3),
-    dbp_mean = rowmean_na(bpxdi1, bpxdi2, bpxdi3)
+    across(c(BPXSY1, BPXSY2, BPXSY3), ~ na_if(., 0)),
+    across(c(BPXDI1, BPXDI2, BPXDI3), ~ na_if(., 0)),
+    sbp_mean = rowMeans(cbind(BPXSY1, BPXSY2, BPXSY3), na.rm = TRUE),
+    dbp_mean = rowMeans(cbind(BPXDI1, BPXDI2, BPXDI3), na.rm = TRUE),
+    # If all 3 readings are NA, rowMeans returns NaN -> set to NA
+    sbp_mean = ifelse(is.nan(sbp_mean), NA_real_, sbp_mean),
+    dbp_mean = ifelse(is.nan(dbp_mean), NA_real_, dbp_mean)
   ) |>
-  select(seqn, sbp_mean, dbp_mean)
+  select(SEQN, sbp_mean, dbp_mean)
 
-# BP medication (antihypertensive): BPQ050A = 1 means currently taking
-bpq_j <- bpq_j |>
-  mutate(bp_med = if_else(bpq050a == 1, 1L, 0L, missing = 0L)) |>
-  select(seqn, bp_med)
+# BP medication (antihypertensive: BPQ050A = 1 = Yes)
+bpq_clean <- bpq |>
+  mutate(bp_med = case_when(
+    BPQ050A == 1 ~ 1L,
+    BPQ050A == 2 ~ 0L,
+    TRUE         ~ 0L   # missing -> assume not on medication (conservative)
+  )) |>
+  select(SEQN, bp_med)
 
-# Smoking: recode to Never / Former / Current
-smq_j <- smq_j |>
+# Smoking status (recode missing codes to NA first)
+smq_clean <- smq |>
   mutate(
-    smq020 = nhanes_na(smq020),
-    smq040 = nhanes_na(smq040),
+    smq020 = nhanes_na(SMQ020),  # smoked >=100 cigarettes
+    smq040 = nhanes_na(SMQ040),  # currently smoke
     smoke_status = case_when(
-      smq020 == 2              ~ "Never",
-      smq020 == 1 & smq040 == 3 ~ "Former",
-      smq020 == 1 & smq040 %in% c(1, 2) ~ "Current",
-      TRUE ~ NA_character_
+      smq020 == 2                       ~ "Never",
+      smq020 == 1 & smq040 == 3        ~ "Former",
+      smq020 == 1 & smq040 %in% c(1,2) ~ "Current",
+      TRUE                              ~ NA_character_
     )
   ) |>
-  select(seqn, smoke_status)
+  select(SEQN, smoke_status)
 
-# Assemble cycle J wide
-cycle_j <- demo_j |>
-  select(seqn, ridageyr, riagendr, ridreth3, dmdeduc2, indfmpir,
-         sdmvpsu, sdmvstra, wtmec2yr) |>
-  left_join(select(metals_j, seqn, lbxbpb, lbxbcd, lbxthg), by = "seqn") |>
-  left_join(select(ghb_j,    seqn, lbxgh),   by = "seqn") |>
-  left_join(select(crp_j,    seqn, lbxcrp),  by = "seqn") |>
-  left_join(select(tchol_j,  seqn, lbxtc),   by = "seqn") |>
-  left_join(select(hdl_j,    seqn, lbdhdd),  by = "seqn") |>
-  left_join(bpx_j,                           by = "seqn") |>
-  left_join(bpq_j,                           by = "seqn") |>
-  left_join(select(bmx_j, seqn, bmxbmi),     by = "seqn") |>
-  left_join(select(diet_j, seqn, dr1tfibe, dr1tvc, dr1tkcal, dr1tcalc, dr1tiron),
-            by = "seqn") |>
-  left_join(smq_j, by = "seqn") |>
+# HSCRP: convert mg/L to mg/dL for comparability (mg/dL = mg/L * 0.1)
+hscrp_clean <- hscrp |>
+  mutate(crp_mgdl = LBXHSCRP * 0.1) |>
+  select(SEQN, crp_mgdl, LBXHSCRP)
+
+# =============================================================================
+# 3. Merge all files by SEQN (left join from demo as base)
+# =============================================================================
+message("\n--- Merging all files by SEQN ---")
+
+merged <- demo |>
+  select(SEQN, RIDAGEYR, RIAGENDR, RIDRETH3, DMDEDUC2, INDFMPIR,
+         SDMVPSU, SDMVSTRA, WTMEC2YR) |>
+  left_join(select(pbcd,  SEQN, LBXBPB, LBXBCD, LBXTHG),   by = "SEQN") |>
+  left_join(hscrp_clean,                                      by = "SEQN") |>
+  left_join(select(ghb,   SEQN, LBXGH),                      by = "SEQN") |>
+  left_join(select(tchol, SEQN, LBXTC),                      by = "SEQN") |>
+  left_join(select(hdl,   SEQN, LBDHDD),                     by = "SEQN") |>
+  left_join(bpx_clean,                                        by = "SEQN") |>
+  left_join(bpq_clean,                                        by = "SEQN") |>
+  left_join(select(bmx,   SEQN, BMXBMI),                     by = "SEQN") |>
+  left_join(select(diet,  SEQN, DR1TFIBE, DR1TVC, DR1TKCAL, DR1TCALC, DR1TIRON),
+            by = "SEQN") |>
+  left_join(smq_clean,                                        by = "SEQN") |>
+  mutate(cycle = "2017-2018")
+
+message(glue("  Merged dataset: {nrow(merged)} rows x {ncol(merged)} cols"))
+
+# =============================================================================
+# 4. Clean and recode variables
+# =============================================================================
+message("\n--- Recoding variables ---")
+
+clean_data <- merged |>
   mutate(
-    cycle      = "2017-2018",
-    wt_combined = wtmec2yr / 2   # 4-year combined weight (divided by num cycles)
-  )
+    # Survey design
+    psu    = SDMVPSU,
+    strata = SDMVSTRA,
+    wt_mec = WTMEC2YR,  # single-cycle: use weight directly (no halving)
 
-message(glue("  Cycle J: {nrow(cycle_j)} participants"))
+    # Demographics
+    age = RIDAGEYR,
+    sex = factor(RIAGENDR, levels = c(1, 2), labels = c("Male", "Female")),
 
-# =============================================================================
-# 2. Load and harmonize 2019-March 2020 (_P) files
-# =============================================================================
-message("--- Loading 2019-March 2020 (cycle P) ---")
-
-demo_p   <- load_raw("DEMO_P")
-metals_p <- load_raw("PBCD_P")
-ghb_p    <- load_raw("GHB_P")
-crp_p    <- load_raw("CRP_P")
-tchol_p  <- load_raw("TCHOL_P")
-hdl_p    <- load_raw("HDL_P")
-bpxo_p   <- load_raw("BPXO_P")   # Oscillometric BP in _P cycle
-bpq_p    <- load_raw("BPQ_P")
-bmx_p    <- load_raw("BMX_P")
-diet_p   <- load_raw("DR1TOT_P")
-smq_p    <- load_raw("SMQ_P")
-
-# 2019-March 2020 uses oscillometric readings: BPXOSY1/2/3 and BPXODI1/2/3
-bpxo_p <- bpxo_p |>
-  mutate(
-    sbp_mean = rowmean_na(bpxosy1, bpxosy2, bpxosy3),
-    dbp_mean = rowmean_na(bpxodi1, bpxodi2, bpxodi3)
-  ) |>
-  select(seqn, sbp_mean, dbp_mean)
-
-bpq_p <- bpq_p |>
-  mutate(bp_med = if_else(bpq050a == 1, 1L, 0L, missing = 0L)) |>
-  select(seqn, bp_med)
-
-smq_p <- smq_p |>
-  mutate(
-    smq020 = nhanes_na(smq020),
-    smq040 = nhanes_na(smq040),
-    smoke_status = case_when(
-      smq020 == 2              ~ "Never",
-      smq020 == 1 & smq040 == 3 ~ "Former",
-      smq020 == 1 & smq040 %in% c(1, 2) ~ "Current",
-      TRUE ~ NA_character_
-    )
-  ) |>
-  select(seqn, smoke_status)
-
-# 2019-March 2020 uses WTMECPRP (pre-pandemic weight)
-cycle_p <- demo_p |>
-  select(seqn, ridageyr, riagendr, ridreth3, dmdeduc2, indfmpir,
-         sdmvpsu, sdmvstra, wtmecprp) |>
-  rename(wtmec2yr = wtmecprp) |>    # harmonize name for binding
-  left_join(select(metals_p, seqn, lbxbpb, lbxbcd, lbxthg), by = "seqn") |>
-  left_join(select(ghb_p,    seqn, lbxgh),   by = "seqn") |>
-  left_join(select(crp_p,    seqn, lbxcrp),  by = "seqn") |>
-  left_join(select(tchol_p,  seqn, lbxtc),   by = "seqn") |>
-  left_join(select(hdl_p,    seqn, lbdhdd),  by = "seqn") |>
-  left_join(bpxo_p,                          by = "seqn") |>
-  left_join(bpq_p,                           by = "seqn") |>
-  left_join(select(bmx_p, seqn, bmxbmi),     by = "seqn") |>
-  left_join(select(diet_p, seqn, dr1tfibe, dr1tvc, dr1tkcal, dr1tcalc, dr1tiron),
-            by = "seqn") |>
-  left_join(smq_p, by = "seqn") |>
-  mutate(
-    cycle      = "2019-March 2020",
-    wt_combined = wtmec2yr / 2
-  )
-
-message(glue("  Cycle P: {nrow(cycle_p)} participants"))
-
-# =============================================================================
-# 3. Stack cycles
-# =============================================================================
-message("--- Stacking cycles ---")
-
-raw_merged <- bind_rows(cycle_j, cycle_p)
-message(glue("  Combined dataset: {nrow(raw_merged)} rows x {ncol(raw_merged)} cols"))
-
-# =============================================================================
-# 4. Standardize and clean variable coding
-# =============================================================================
-message("--- Cleaning and recoding variables ---")
-
-clean_data <- raw_merged |>
-  mutate(
-    # --- Demographics ---
-    age     = ridageyr,
-    sex     = factor(riagendr, levels = c(1, 2), labels = c("Male", "Female")),
-
-    # Race/ethnicity: RIDRETH3 categories
-    race_eth = factor(ridreth3,
+    race_eth = factor(RIDRETH3,
                       levels = c(1, 2, 3, 4, 6, 7),
-                      labels = c("Mexican American",
-                                 "Other Hispanic",
-                                 "Non-Hispanic White",
-                                 "Non-Hispanic Black",
-                                 "Non-Hispanic Asian",
-                                 "Other/Multiracial")),
+                      labels = c("Mexican American", "Other Hispanic",
+                                 "Non-Hispanic White", "Non-Hispanic Black",
+                                 "Non-Hispanic Asian", "Other/Multiracial")),
 
-    # Education (adults)
-    educ = factor(nhanes_na(dmdeduc2),
-                  levels = c(1, 2, 3, 4, 5),
-                  labels = c("Less than 9th grade",
-                             "9-11th grade",
-                             "High school / GED",
-                             "Some college / AA",
-                             "College graduate or above")),
+    educ = factor(nhanes_na(DMDEDUC2),
+                  levels = 1:5,
+                  labels = c("Less than 9th grade", "9-11th grade",
+                             "High school/GED", "Some college/AA",
+                             "College graduate+")),
 
-    # Poverty-income ratio: values > 5 are top-coded at 5
-    pir = if_else(indfmpir > 5, 5, indfmpir),
+    pir = if_else(INDFMPIR > 5, 5, INDFMPIR),  # top-code at 5
 
-    # --- Metal exposures (keep as numeric, NAs already NA from nhanesA) ---
-    blood_lead  = lbxbpb,
-    blood_cad   = lbxbcd,
-    blood_hg    = lbxthg,
+    # Metals (keep raw; log-transform in 03)
+    blood_lead = LBXBPB,
+    blood_cad  = LBXBCD,
+    blood_hg   = LBXTHG,
 
-    # --- Outcomes ---
-    hba1c       = lbxgh,
-    crp         = lbxcrp,
-    total_chol  = lbxtc,
-    hdl_chol    = lbdhdd,
-    sbp         = sbp_mean,
-    dbp         = dbp_mean,
+    # Outcomes
+    hba1c      = LBXGH,
+    crp        = crp_mgdl,       # mg/dL (converted from HSCRP mg/L)
+    crp_mgl    = LBXHSCRP,      # mg/L (original units, saved for reference)
+    total_chol = LBXTC,
+    hdl_chol   = LBDHDD,
+    sbp        = sbp_mean,
+    dbp        = dbp_mean,
 
-    # --- Body measures ---
-    bmi         = bmxbmi,
+    # Body measures
+    bmi = BMXBMI,
 
-    # --- Nutrition ---
-    fiber_g     = dr1tfibe,
-    vitc_mg     = dr1tvc,
-    energy_kcal = dr1tkcal,
-    calcium_mg  = dr1tcalc,
-    iron_mg     = dr1tiron,
+    # Nutrition
+    fiber_g     = DR1TFIBE,
+    vitc_mg     = DR1TVC,
+    energy_kcal = DR1TKCAL,
+    calcium_mg  = DR1TCALC,
+    iron_mg     = DR1TIRON,
 
-    # --- Smoking ---
-    smoke_status = factor(smoke_status,
-                          levels = c("Never", "Former", "Current")),
-
-    # --- Survey weights ---
-    psu    = sdmvpsu,
-    strata = sdmvstra,
-    wt_mec = wt_combined
+    # Behavioral
+    smoke_status = factor(smoke_status, levels = c("Never", "Former", "Current"))
   ) |>
-  select(seqn, cycle, psu, strata, wt_mec,
-         age, sex, race_eth, educ, pir,
-         blood_lead, blood_cad, blood_hg,
-         hba1c, crp, total_chol, hdl_chol, sbp, dbp,
-         bmi, fiber_g, vitc_mg, energy_kcal, calcium_mg, iron_mg,
-         smoke_status, bp_med)
+  select(
+    SEQN, cycle, psu, strata, wt_mec,
+    age, sex, race_eth, educ, pir,
+    blood_lead, blood_cad, blood_hg,
+    hba1c, crp, crp_mgl, total_chol, hdl_chol, sbp, dbp,
+    bmi, fiber_g, vitc_mg, energy_kcal, calcium_mg, iron_mg,
+    smoke_status, bp_med
+  )
 
 # =============================================================================
-# 5. Apply exclusion criteria
+# 5. Exclusion criteria
 # =============================================================================
-message("--- Applying exclusion criteria ---")
+message("\n--- Applying exclusion criteria ---")
 
 n_start <- nrow(clean_data)
 exclusion_log <- tibble(step = character(), n_remaining = integer(), n_excluded = integer())
 
-log_step <- function(df, step_label) {
+log_step <- function(df, label) {
   n_rem <- nrow(df)
-  n_exc <- n_start - n_rem
-  exclusion_log <<- bind_rows(exclusion_log,
-                              tibble(step = step_label, n_remaining = n_rem, n_excluded = n_exc))
+  exclusion_log <<- bind_rows(
+    exclusion_log,
+    tibble(step = label, n_remaining = n_rem, n_excluded = n_start - n_rem)
+  )
   n_start <<- n_rem
   df
 }
 
 analysis_data <- clean_data |>
-  log_step("Starting N (all NHANES participants)") |>
-
-  # Restrict to adults aged 20+
+  log_step("Full NHANES 2017-2018 sample") |>
   filter(age >= 20) |>
-  log_step("Exclude age < 20") |>
-
-  # Require MEC exam weight > 0 (i.e., actually examined)
+  log_step("Restrict to adults aged ≥20") |>
   filter(!is.na(wt_mec) & wt_mec > 0) |>
-  log_step("Exclude missing/zero MEC exam weight") |>
-
-  # Require at least one metal exposure measured
+  log_step("Exclude zero/missing MEC exam weight") |>
   filter(!is.na(blood_lead) | !is.na(blood_cad) | !is.na(blood_hg)) |>
   log_step("Exclude missing all three metal exposures") |>
-
-  # Require HbA1c (primary continuous outcome)
   filter(!is.na(hba1c)) |>
   log_step("Exclude missing HbA1c (primary outcome)") |>
-
-  # Require key demographic covariates
   filter(!is.na(age) & !is.na(sex) & !is.na(race_eth)) |>
   log_step("Exclude missing age, sex, or race/ethnicity")
 
 message("\nExclusion flow:")
 print(exclusion_log)
+message(glue("\nFinal analytic sample: {nrow(analysis_data)} participants"))
 
-n_final <- nrow(analysis_data)
-message(glue("\n  Final analytic sample: {n_final} participants"))
+# Check wt_mec is positive for all (required for survey design)
+stopifnot("Negative weights found" = all(analysis_data$wt_mec > 0, na.rm = TRUE))
 
 # =============================================================================
 # 6. Save outputs
 # =============================================================================
-saveRDS(analysis_data,  file.path(dir_processed, "analysis_dataset.rds"))
-saveRDS(exclusion_log,  file.path(dir_processed, "exclusion_log.rds"))
+saveRDS(analysis_data, file.path(dir_processed, "analysis_dataset.rds"))
+saveRDS(analysis_data, file.path(dir_processed, "analysis_dataset_v2.rds")) # alias for later scripts
+saveRDS(exclusion_log, file.path(dir_processed, "exclusion_log.rds"))
 write_csv(analysis_data, file.path(dir_processed, "analysis_dataset.csv"))
 write_csv(exclusion_log, file.path(dir_processed, "exclusion_log.csv"))
-
-message(glue("\n  Saved: data/processed/analysis_dataset.rds  ({n_final} rows)"))
-message(glue("  Saved: data/processed/exclusion_log.rds"))
 
 # Missingness report
 miss_rpt <- miss_summary(analysis_data)
 write_csv(miss_rpt, file.path(dir_codebook, "missingness_report.csv"))
-message(glue("  Saved: data/codebook/missingness_report.csv"))
 
+message(glue("\nSaved analysis_dataset.rds ({nrow(analysis_data)} rows)"))
+message(glue("Saved exclusion_log.rds"))
+message(glue("Saved missingness_report.csv"))
 message("\n=== 02_clean_merge_data.R: complete ===\n")

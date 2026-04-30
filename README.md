@@ -1,62 +1,67 @@
 # Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers
-### A Reproducible NHANES Analysis
+### A Reproducible Cross-Sectional Analysis of NHANES 2017–2018
 
-[![R](https://img.shields.io/badge/R-≥4.3-blue.svg)](https://cran.r-project.org/)
-[![NHANES](https://img.shields.io/badge/Data-NHANES%202017--March%202020-green.svg)](https://wwwn.cdc.gov/nchs/nhanes/)
+[![R](https://img.shields.io/badge/R-≥4.1-blue.svg)](https://cran.r-project.org/)
+[![Data: NHANES 2017–2018](https://img.shields.io/badge/Data-NHANES%202017--2018-green.svg)](https://wwwn.cdc.gov/nchs/nhanes/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Made with Quarto](https://img.shields.io/badge/Made%20with-Quarto-39729e.svg)](https://quarto.org/)
 
 ---
 
-## Project Overview
+## Overview
 
-This project investigates associations between **blood heavy metal concentrations** (lead, cadmium, mercury) and **glycemic biomarkers** (HbA1c) among U.S. adults, using publicly available data from the National Health and Nutrition Examination Survey (NHANES) 2017–March 2020. A secondary objective is to evaluate whether **dietary fiber intake** modifies or attenuates these associations.
+This project examines whether **blood metal concentrations** (lead, cadmium, mercury) are associated with **glycated hemoglobin (HbA1c)** among U.S. adults, and whether **dietary fiber** modifies these associations. The analysis uses survey-weighted regression appropriate for the complex NHANES sampling design and is delivered as a fully reproducible Quarto report.
 
-The project is designed as a **portfolio-quality epidemiological analysis** demonstrating reproducible research practices, complex survey data handling, and rigorous statistical modeling suitable for academic or public health research settings.
+**Final analytic sample:** 5,014 U.S. adults (≥20 years) from NHANES 2017–2018, with valid blood metal and HbA1c measurements.
+
+**Headline result:** After full adjustment for demographic, socioeconomic, behavioral, and dietary factors, log blood lead was inversely associated with HbA1c (β = −0.21, 95% CI: −0.28, −0.15; p < 0.001), reflecting strong negative confounding by socioeconomic position. The unadjusted effect was small and non-significant.
 
 ---
 
-## Why This Project Matters
+## Preview
 
-Environmental metal exposures persist in the U.S. population despite decades of regulatory progress. Lead, cadmium, and mercury—even at low, subclinical levels—may disrupt insulin signaling, promote oxidative stress, and contribute to cardiometabolic disease. HbA1c is a stable, clinically important biomarker of average glycemia and a diagnostic criterion for prediabetes and diabetes.
+| Exposure distributions | Forest plot of model-adjusted effects | Lead × fiber interaction |
+|:-:|:-:|:-:|
+| ![Exposure histograms](outputs/figures/fig01_exposure_distributions.png) | ![Forest plot](outputs/figures/fig04_forest_plot.png) | ![Interaction](outputs/figures/fig06_interaction_plot.png) |
 
-Understanding whether dietary quality (specifically fiber intake) modifies these associations has direct public health relevance: it suggests that improving diet may partially buffer the cardiometabolic effects of environmental metal burdens—an actionable, modifiable factor.
+📄 **Full report:** [`report/nhanes_metal_nutrition_biomarkers.html`](report/nhanes_metal_nutrition_biomarkers.html) (HTML, self-contained) · [PDF](report/nhanes_metal_nutrition_biomarkers.pdf)
 
 ---
 
 ## Research Question
 
-> Are blood concentrations of lead, cadmium, and mercury associated with HbA1c among U.S. adults aged ≥20 years, and does dietary fiber intake modify or attenuate these associations?
+> Are blood concentrations of lead, cadmium, and mercury associated with HbA1c among U.S. adults aged ≥20, and does dietary fiber intake modify these associations?
 
-**Primary exposure:** Blood lead (µg/dL)  
-**Primary outcome:** HbA1c (%)  
-**Effect modifier / confounder:** Dietary fiber (g/day)  
-**Study design:** Cross-sectional analysis of NHANES 2017–March 2020
+| | |
+|--|--|
+| **Primary exposure** | Blood lead (µg/dL), log-transformed |
+| **Primary outcome** | HbA1c (%); secondary: elevated HbA1c ≥5.7% |
+| **Effect modifier** | Dietary fiber (g/day) |
+| **Design** | Cross-sectional; survey-weighted |
+| **Cycle** | NHANES 2017–2018 |
 
 ---
 
 ## Data Source
 
-**National Health and Nutrition Examination Survey (NHANES)**  
-Centers for Disease Control and Prevention (CDC), National Center for Health Statistics (NCHS)
+**National Health and Nutrition Examination Survey (NHANES)** — CDC / National Center for Health Statistics. Public domain (U.S. government data).
 
-- **Cycles:** 2017–2018 (`_J`) and 2019–March 2020 pre-pandemic (`_P`)
-- **Public access:** [https://wwwn.cdc.gov/nchs/nhanes/](https://wwwn.cdc.gov/nchs/nhanes/)
-- **Download method:** `nhanesA` R package (programmatic download from CDC API)
-- **License:** Public domain (U.S. government data)
+- Public access: https://wwwn.cdc.gov/nchs/nhanes/
+- **Download method:** Direct XPT download from the CDC public data repository via `curl` + `haven::read_xpt()`, with retry and fallback to `download.file()`. The `nhanesA` API was not used because of an upstream URL-construction bug in cycle-J files; see [`docs/methods_notes.md`](docs/methods_notes.md).
 
-**NHANES files used:**
+**NHANES files used (cycle 2017–2018, suffix `_J`):**
 
-| Domain | Files | Variables |
-|--------|-------|-----------|
-| Demographics | DEMO_J, DEMO_P | Age, sex, race/ethnicity, education, PIR, survey design |
-| Blood metals | PBCD_J, PBCD_P | Blood lead, cadmium, total mercury |
-| HbA1c | GHB_J, GHB_P | Glycated hemoglobin |
-| CRP | CRP_J, CRP_P | C-reactive protein |
-| Cholesterol | TCHOL_J, TCHOL_P; HDL_J, HDL_P | Total and HDL cholesterol |
-| Blood pressure | BPX_J, BPXO_P; BPQ_J, BPQ_P | BP readings and medication |
-| Body measures | BMX_J, BMX_P | BMI |
-| Dietary recall | DR1TOT_J, DR1TOT_P | Fiber, vitamin C, energy, calcium, iron |
-| Smoking | SMQ_J, SMQ_P | Smoking status |
+| Domain | File | Variables |
+|--------|------|-----------|
+| Demographics | `DEMO_J` | Age, sex, race/ethnicity, education, PIR, survey design |
+| Blood metals | `PBCD_J` | Blood lead (`LBXBPB`), cadmium (`LBXBCD`), total mercury (`LBXTHG`) |
+| HbA1c | `GHB_J` | Glycated hemoglobin (`LBXGH`) |
+| C-reactive protein | `HSCRP_J` | High-sensitivity CRP (`LBXHSCRP`) |
+| Cholesterol | `TCHOL_J`, `HDL_J` | Total and HDL cholesterol |
+| Blood pressure | `BPX_J`, `BPQ_J` | BP readings + medication status |
+| Body measures | `BMX_J` | BMI |
+| 24-hr dietary recall (Day 1) | `DR1TOT_J` | Fiber, vitamin C, energy, calcium, iron |
+| Smoking | `SMQ_J` | Smoking status |
 
 ---
 
@@ -64,18 +69,20 @@ Centers for Disease Control and Prevention (CDC), National Center for Health Sta
 
 | Step | Approach |
 |------|---------|
-| Data download | `nhanesA` package; raw files cached as `.rds` |
-| Merging | Left-join on `SEQN` across 11 NHANES files per cycle; row-bind two cycles |
-| Exclusions | Age <20, missing MEC weight, missing all metals, missing HbA1c |
-| Exposure transformation | Natural log (right-skewed metals); quartile categorization |
-| Outcome | HbA1c (continuous); elevated HbA1c ≥5.7% (binary) |
-| Survey weights | 4-year combined weights (original weight ÷ 2); `svydesign()` with strata + PSU |
-| Linear regression | `svyglm(gaussian())`: 3 models + interaction |
-| Logistic regression | `svyglm(quasibinomial())`: 3 models for binary outcome |
+| Data download | Direct CDC XPT files via `curl` (180 s timeout, 3 retries); cached locally as `.rds` |
+| Merging | Left-join on `SEQN` across 11 NHANES files |
+| Exclusions | Age <20; missing MEC weight; missing all metals; missing HbA1c |
+| Exposure transformation | Natural log (right-skewed metals); quartile categorization for stratification |
+| Outcome | HbA1c (continuous); elevated HbA1c ≥5.7% (binary; ADA prediabetes threshold) |
+| Survey design | `svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR, nest = TRUE)` |
+| Linear regression | `svyglm(gaussian())`: 4 sequential models (unadjusted → demographic → fully adjusted → + lead×fiber interaction) |
+| Logistic regression | `svyglm(quasibinomial())`: 3 models for elevated HbA1c |
 | Sensitivity | Cadmium and mercury substituted for lead in fully adjusted model |
 | Visualization | `ggplot2` + `patchwork`; 7 publication-quality figures |
-| Tables | `gtsummary` → HTML + Word-compatible `.docx` |
-| Report | Quarto (`.qmd`) → self-contained HTML |
+| Tables | `gtsummary` + `flextable` → DOCX |
+| Report | Quarto (`.qmd`) → self-contained HTML and PDF |
+
+A normal approximation (z-test) is used for confidence intervals in fully adjusted models because the parameter count exceeds the design degrees of freedom (15) — a standard NCHS-recommended approach for large NHANES samples. See [`docs/methods_notes.md`](docs/methods_notes.md).
 
 ---
 
@@ -83,32 +90,34 @@ Centers for Disease Control and Prevention (CDC), National Center for Health Sta
 
 ```
 nhanes-metal-nutrition-biomarkers/
-├── README.md                                  ← This file
-├── nhanes-metal-nutrition-biomarkers.Rproj    ← RStudio project
-├── package_setup.R                            ← Install all packages
+├── README.md
+├── LICENSE
+├── nhanes-metal-nutrition-biomarkers.Rproj
+├── package_setup.R
 │
 ├── R/
 │   ├── 00_setup.R                  ← Libraries, paths, helper functions
-│   ├── 01_download_data.R          ← Download NHANES files via nhanesA
+│   ├── 01_download_data.R          ← Direct CDC XPT download (curl + retry)
 │   ├── 02_clean_merge_data.R       ← Merge, harmonize, apply exclusions
 │   ├── 03_define_variables.R       ← Transformations, binary outcomes, labels
 │   ├── 04_descriptive_analysis.R   ← Table 1, missingness, correlations
 │   ├── 05_regression_models.R      ← Linear + logistic survey-weighted models
 │   ├── 06_visualizations.R         ← 7 ggplot2 figures
-│   └── 07_export_tables_figures.R  ← Export tables to HTML/DOCX
+│   └── 07_export_tables_figures.R  ← Export tables to DOCX
 │
 ├── data/
-│   ├── raw/          ← Downloaded NHANES .rds files (not committed to git)
-│   ├── processed/    ← analysis_dataset_v2.rds, exclusion_log.rds, model_list.rds
-│   └── codebook/     ← variable_inspection.csv, missingness_report.csv
+│   ├── raw/          ← Raw NHANES .rds (gitignored; downloaded by 01_)
+│   ├── processed/    ← analysis_dataset_v2.rds (gitignored; reproducible)
+│   └── codebook/     ← Variable inspection & missingness reports
 │
 ├── outputs/
-│   ├── tables/       ← Table 1–4 (.html, .docx), regression CSVs
-│   ├── figures/      ← fig01–fig07 (.png, 300 dpi)
-│   └── report/       ← output_inventory.csv
+│   ├── tables/       ← Table 1–4 (.docx) + regression CSVs
+│   └── figures/      ← fig01–fig07 (.png, 300 dpi)
 │
 ├── report/
-│   └── nhanes_metal_nutrition_biomarkers.qmd  ← Main Quarto report
+│   ├── nhanes_metal_nutrition_biomarkers.qmd  ← Source
+│   ├── nhanes_metal_nutrition_biomarkers.html ← Rendered (self-contained)
+│   └── nhanes_metal_nutrition_biomarkers.pdf  ← Rendered
 │
 └── docs/
     ├── analytic_plan.md        ← Pre-analysis plan with hypotheses
@@ -118,153 +127,104 @@ nhanes-metal-nutrition-biomarkers/
 
 ---
 
-## How to Reproduce This Analysis
+## Reproducing the Analysis
 
 ### Prerequisites
 
-- **R** (≥ 4.3): [https://cran.r-project.org/](https://cran.r-project.org/)
-- **Quarto** (≥ 1.4): [https://quarto.org/docs/get-started/](https://quarto.org/docs/get-started/)
-- **RStudio** (recommended): [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
-- Active internet connection (for NHANES data download)
+- **R** ≥ 4.1 (developed and tested on 4.1.2)
+- **Quarto** ≥ 1.3
+- Active internet connection (CDC NHANES download)
 
-### Step-by-Step
+### Steps
 
-**1. Clone or download the repository**
 ```bash
-git clone https://github.com/YOUR-USERNAME/nhanes-metal-nutrition-biomarkers.git
+# 1. Clone
+git clone https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers.git
 cd nhanes-metal-nutrition-biomarkers
-```
 
-**2. Open the R project**
-Double-click `nhanes-metal-nutrition-biomarkers.Rproj` in RStudio, or:
-```r
-rstudioapi::openProject("nhanes-metal-nutrition-biomarkers.Rproj")
-```
+# 2. Install packages (from R)
+Rscript package_setup.R
 
-**3. Install required packages**
-```r
-source("package_setup.R")
-```
-
-**4. Run analysis scripts in order**
-```r
-source("R/00_setup.R")
-source("R/01_download_data.R")      # ~10-30 min on first run; internet required
-source("R/02_clean_merge_data.R")
-source("R/03_define_variables.R")
-source("R/04_descriptive_analysis.R")
-source("R/05_regression_models.R")
-source("R/06_visualizations.R")
-source("R/07_export_tables_figures.R")
-```
-
-Or from the terminal:
-```bash
+# 3. Run pipeline
 Rscript R/00_setup.R
-Rscript R/01_download_data.R
+Rscript R/01_download_data.R       # ~5–15 min on first run
 Rscript R/02_clean_merge_data.R
 Rscript R/03_define_variables.R
 Rscript R/04_descriptive_analysis.R
 Rscript R/05_regression_models.R
 Rscript R/06_visualizations.R
 Rscript R/07_export_tables_figures.R
-```
 
-**5. Render the report**
-```r
-quarto::quarto_render("report/nhanes_metal_nutrition_biomarkers.qmd")
-```
-Or from the terminal:
-```bash
+# 4. Render report
 quarto render report/nhanes_metal_nutrition_biomarkers.qmd
 ```
 
-The rendered HTML report will appear at `report/nhanes_metal_nutrition_biomarkers.html`.
-
-### If Downloads Fail
-
-If `nhanesA` cannot download files, you can download them manually:
-1. Visit [https://wwwn.cdc.gov/nchs/nhanes/](https://wwwn.cdc.gov/nchs/nhanes/)
-2. Select the cycle → Lab/Examination/Questionnaire/Dietary data
-3. Download the `.XPT` file
-4. Convert and save in R:
+If the CDC download fails, you can manually download XPT files from the [NHANES 2017–2018 page](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2017) and place them in `data/raw/` as `.rds`:
 ```r
-dat <- haven::read_xpt("PBCD_J.XPT")
-saveRDS(dat, "data/raw/PBCD_J.rds")
+saveRDS(haven::read_xpt("PBCD_J.XPT"), "data/raw/PBCD_J.rds")
 ```
 
 ---
 
 ## Main Outputs
 
-| Output | Location | Description |
-|--------|----------|-------------|
-| Table 1: Overall characteristics | `outputs/tables/table1_overall.html/.docx` | Demographics, exposures, outcomes |
-| Table 1b: By lead quartile | `outputs/tables/table1_by_lead_quartile.html/.docx` | Stratified characteristics |
-| Table 2: Linear regression | `outputs/tables/table2_linear_regression.html/.docx` | β (95% CI) for lead→HbA1c |
-| Table 3: Logistic regression | `outputs/tables/table3_logistic_regression.html/.docx` | OR (95% CI) for lead→elevated HbA1c |
-| Table 4: Multi-metal sensitivity | `outputs/tables/table4_sensitivity_metals.html/.docx` | All metals → HbA1c |
-| Figure 1: Exposure distributions | `outputs/figures/fig01_exposure_distributions.png` | Metal histograms |
-| Figure 2: Outcome distributions | `outputs/figures/fig02_outcome_distributions.png` | HbA1c histogram |
-| Figure 3: Scatter plot | `outputs/figures/fig03_exposure_outcome_scatter.png` | Lead vs. HbA1c |
-| Figure 4: Forest plot | `outputs/figures/fig04_forest_plot.png` | Model comparison |
-| Figure 5: By quartile | `outputs/figures/fig05_hba1c_by_lead_quartile.png` | Mean HbA1c by lead Q |
-| Figure 6: Interaction plot | `outputs/figures/fig06_interaction_plot.png` | Lead × fiber |
-| Figure 7: Multi-metal forest | `outputs/figures/fig07_metals_forest.png` | Sensitivity |
-| Full report | `report/nhanes_metal_nutrition_biomarkers.html` | Self-contained HTML |
+| Output | Location |
+|--------|----------|
+| Table 1 — Overall characteristics | `outputs/tables/table1_overall.docx` |
+| Table 1b — By lead quartile | `outputs/tables/table1_by_lead_quartile.docx` |
+| Table 2 — Linear regression (lead → HbA1c) | `outputs/tables/table2_linear_regression.docx` |
+| Table 3 — Logistic regression (elevated HbA1c) | `outputs/tables/table3_logistic_regression.docx` |
+| Table 4 — Multi-metal sensitivity | `outputs/tables/table4_sensitivity_metals.docx` |
+| Figures 1–7 | `outputs/figures/fig01–fig07.png` |
+| Full report | `report/nhanes_metal_nutrition_biomarkers.html` (and `.pdf`) |
 
 ---
 
 ## Skills Demonstrated
 
-| Skill | Where |
-|-------|-------|
-| Real public health data acquisition | `R/01_download_data.R` |
-| Complex survey data handling | `R/05_regression_models.R`, `svydesign()` |
-| Multi-file data merging and harmonization | `R/02_clean_merge_data.R` |
-| Variable engineering and transformation | `R/03_define_variables.R` |
-| Publication-quality Table 1 | `R/04_descriptive_analysis.R`, `gtsummary` |
-| Linear and logistic regression | `R/05_regression_models.R` |
-| Effect modification / interaction analysis | Models 4, `R/05_regression_models.R` |
-| ggplot2 visualization (7 figures) | `R/06_visualizations.R` |
-| Reproducible Quarto report | `report/nhanes_metal_nutrition_biomarkers.qmd` |
-| Pre-analysis plan | `docs/analytic_plan.md` |
-| Professional documentation | `docs/variable_dictionary.md`, `docs/methods_notes.md` |
-| Portable project structure (`here`) | All scripts |
-| Epidemiological interpretation | Report sections: Background, Results, Limitations |
+- Real public-health data acquisition (programmatic NHANES download)
+- Complex survey design analysis (`survey` package, weights/strata/PSUs)
+- Multi-file merging and harmonization (11 NHANES files, single SEQN key)
+- Variable engineering: log transforms, quartiles, z-scores, binary thresholds
+- Publication-quality Table 1 with `gtsummary`
+- Survey-weighted linear and logistic regression with sequential adjustment
+- Effect-modification analysis via continuous interaction
+- `ggplot2` + `patchwork` for 7 publication-quality figures
+- Reproducible Quarto research report (HTML + PDF)
+- Project documentation: pre-analysis plan, variable dictionary, methods notes
+- Portable project structure with `here`
+
+---
+
+## Limitations
+
+This analysis is **cross-sectional and association-based; it does not support causal inference**. Blood metals reflect recent exposure (lead, mercury) or cumulative kidney burden (cadmium); chronic-exposure effects relevant to long-term glycemia may be misclassified. Day-1 dietary recall is subject to measurement error. Complete-case analysis assumes missing-at-random. See the report's *Limitations* section and `docs/methods_notes.md` for full discussion.
 
 ---
 
 ## Future Extensions
 
-1. **Mixture analysis** using Weighted Quantile Sum (WQS) regression or Bayesian Kernel Machine Regression (BKMR) to model joint metal mixture effects
-2. **Mediation analysis** examining whether BMI mediates the metal-HbA1c pathway
-3. **Race/ethnicity stratification** to address health disparities in metal bioaccumulation
-4. **Additional outcomes** including CRP (inflammation), eGFR (kidney function), and blood pressure
-5. **Multiple imputation** to handle missing dietary data more rigorously
-6. **Dietary pattern analysis** using Healthy Eating Index (HEI-2015) as a comprehensive nutrition confounder
+1. **Metal mixture modeling** — Weighted Quantile Sum (WQS) or Bayesian Kernel Machine Regression
+2. **Mediation analysis** — does BMI mediate the lead–HbA1c relationship?
+3. **Race/ethnicity stratification** — disparities in metal bioaccumulation
+4. **Additional outcomes** — high-sensitivity CRP, eGFR, blood pressure
+5. **Multiple imputation** for missing dietary data
+6. **Healthy Eating Index (HEI-2015)** as a richer nutrition exposure
 
 ---
 
 ## Author
 
-**Ao Xu**  
-MPH / Data Analyst  
-Email: ax2183@nyu.edu
-
----
+**Ao Xu** · ax2183@nyu.edu  
+New York University
 
 ## License
 
-This project is released under the MIT License. NHANES data are in the public domain (U.S. government work, no copyright).
-
----
+MIT — see [LICENSE](LICENSE). NHANES data are public domain.
 
 ## Citation
 
-If you use or adapt this analysis:
-
-> Xu A. (2025). *Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible NHANES Analysis*. GitHub. https://github.com/YOUR-USERNAME/nhanes-metal-nutrition-biomarkers
+> Xu A. (2025). *Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible Cross-Sectional Analysis of NHANES 2017–2018.* GitHub. https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers
 
 **Data citation:**
-> National Center for Health Statistics. National Health and Nutrition Examination Survey Data, 2017–2018 and 2019–March 2020 Pre-Pandemic. Hyattsville, MD: U.S. Department of Health and Human Services, Centers for Disease Control and Prevention. https://wwwn.cdc.gov/nchs/nhanes/.
+> National Center for Health Statistics. National Health and Nutrition Examination Survey Data, 2017–2018. Hyattsville, MD: U.S. Department of Health and Human Services, Centers for Disease Control and Prevention. https://wwwn.cdc.gov/nchs/nhanes/.

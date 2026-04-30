@@ -1,0 +1,5 @@
+model,estimate,std.error,conf.low,conf.high,p.value
+Model 1: Unadjusted,0.0421,0.0234,-0.0082,0.0923,0.0941
+Model 2: Demo-adjusted,-0.2236,0.0301,-0.2948,-0.1525,1e-4
+Model 3: Fully adjusted,-0.2137,0.0299,-0.2773,-0.1501,0
+Model 4: + Lead<c3><97>Fiber interaction,-0.2128,0.0308,-0.2786,-0.1471,0

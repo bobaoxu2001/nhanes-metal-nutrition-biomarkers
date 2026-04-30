@@ -1,7 +1,7 @@
 # Variable Dictionary
 
 **Project:** Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers  
-**Data Source:** NHANES 2017–2018 (cycle J) and 2019–March 2020 (cycle P)  
+**Data Source:** NHANES 2017–2018 (cycle J)  
 **Last Updated:** 2025
 
 ---
@@ -13,13 +13,9 @@
 | `seqn` | `SEQN` | All | Respondent sequence number (unique ID) | Key / merge |
 | `psu` | `SDMVPSU` | DEMO | Masked variance pseudo-PSU | Survey design |
 | `strata` | `SDMVSTRA` | DEMO | Masked variance pseudo-stratum | Survey design |
-| `wt_mec` | `WTMEC2YR` / `WTMECPRP` | DEMO | Combined 4-year MEC exam weight | Survey weight |
-| `cycle` | Derived | — | NHANES cycle (2017–2018 or 2019–March 2020) | Stratum |
+| `wt_mec` | `WTMEC2YR` | DEMO | 2-year MEC examination weight | Survey weight |
 
-**Weight construction:**  
-- 2017–2018: `wt_combined = WTMEC2YR / 2`  
-- 2019–March 2020: `wt_combined = WTMECPRP / 2`  
-(Division by 2 = number of cycles combined, per NCHS guidelines)
+**Weight note:** Single-cycle analysis uses `WTMEC2YR` directly without pooling adjustment, per NCHS analytic guidelines.
 
 ---
 
@@ -52,9 +48,8 @@
 | `q_hg` | Derived | — | Blood mercury quartile | Q1–Q4 | `quartile_factor(blood_hg)` | Descriptive |
 
 **NHANES PBCD File Notes:**
-- PBCD_J (2017–2018): Blood Cadmium, Lead, Total Mercury, Selenium, and Manganese
-- PBCD_P (2019–March 2020): Same variables, same NHANES file structure
-- Detection: ICP-MS; LOD varies by cycle; values below LOD = LOD/√2 (pre-applied by NHANES)
+- `PBCD_J` (2017–2018): Blood Cadmium, Lead, Total Mercury, Selenium, and Manganese
+- Detection: ICP-MS; values below LOD = LOD/√2 (pre-applied by NHANES)
 
 ---
 
@@ -65,11 +60,11 @@
 | `hba1c` | `LBXGH` | GHB | Glycated hemoglobin (HbA1c) | % | None | Primary continuous outcome |
 | `hba1c_elevated` | Derived | — | Elevated HbA1c (≥5.7%) | 0/1 | `hba1c >= 5.7` | Primary binary outcome |
 | `hba1c_diabetes` | Derived | — | Diabetes-range HbA1c (≥6.5%) | 0/1 | `hba1c >= 6.5` | Secondary binary outcome |
-| `crp` | `LBXCRP` | CRP | C-reactive protein | mg/dL | None | Secondary outcome |
+| `crp` | `LBXHSCRP` × 0.1 | HSCRP | High-sensitivity C-reactive protein (converted from mg/L to mg/dL) | mg/dL | Unit conversion | Secondary outcome |
 | `total_chol` | `LBXTC` | TCHOL | Total cholesterol | mg/dL | None | Secondary outcome |
 | `hdl_chol` | `LBDHDD` | HDL | HDL cholesterol | mg/dL | None | Secondary outcome |
-| `sbp` | Derived | BPX/BPXO | Mean systolic blood pressure | mmHg | Row mean of 3 readings | Secondary outcome |
-| `dbp` | Derived | BPX/BPXO | Mean diastolic blood pressure | mmHg | Row mean of 3 readings | Secondary outcome |
+| `sbp` | Derived | BPX | Mean systolic blood pressure | mmHg | Row mean of `BPXSY1/2/3` | Secondary outcome |
+| `dbp` | Derived | BPX | Mean diastolic blood pressure | mmHg | Row mean of `BPXDI1/2/3` | Secondary outcome |
 | `hypertension` | Derived | — | Hypertension (SBP≥130 OR DBP≥80 OR BP med) | 0/1 | See 03_define_variables.R | Secondary binary outcome |
 
 **HbA1c thresholds:**
@@ -86,8 +81,8 @@
 | `bmi` | `BMXBMI` | BMX | Body mass index | kg/m² | Covariate / secondary outcome |
 | `bmi_cat` | Derived | — | BMI category (WHO) | Underweight/<18.5, Normal/18.5–24.9, Overweight/25–29.9, Obese/≥30 | Descriptive |
 | `bp_med` | `BPQ050A` | BPQ | Currently taking antihypertensive medication | 0=No, 1=Yes | Covariate (hypertension definition) |
-| `sbp1/2/3` | `BPXSY1/2/3` | BPX | Systolic BP readings 1/2/3 (2017–2018) | mmHg | Used for mean SBP |
-| `sbp1p/2p/3p` | `BPXOSY1/2/3` | BPXO | Systolic BP readings 1/2/3 (2019–March 2020) | mmHg | Used for mean SBP |
+| `sbp1/2/3` | `BPXSY1/2/3` | BPX | Systolic BP readings 1/2/3 | mmHg | Used for mean SBP |
+| `dbp1/2/3` | `BPXDI1/2/3` | BPX | Diastolic BP readings 1/2/3 | mmHg | Used for mean DBP |
 
 ---
 
@@ -128,4 +123,4 @@ The following NHANES values are recoded to `NA` using `nhanes_na()`:
 | 7, 77, 777 | Refused |
 | 9, 99, 999, 9999 | Don't know |
 
-Note: nhanesA package automatically converts many labeled values; numeric recoding applied as a safety check.
+Note: `haven::read_xpt()` preserves the labelled class on imported variables; we strip these via `haven::zap_labels()` and apply explicit numeric recoding as a safety check (see `R/02_clean_merge_data.R`).

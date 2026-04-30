@@ -12,6 +12,15 @@ source(here::here("R", "00_setup.R"))
 library(gtsummary)
 library(gt)
 
+# Helper: save gtsummary as Word doc (avoids xfun version conflict with gtsave)
+save_gtsummary_docx <- function(tbl, path) {
+  tbl |>
+    as_flex_table() |>
+    set_table_properties(layout = "autofit") |>
+    fontsize(size = 9, part = "all") |>
+    save_as_docx(path = path)
+}
+
 message("=== 04_descriptive_analysis.R: descriptive analysis ===\n")
 
 # --- Load data ---------------------------------------------------------------
@@ -71,10 +80,8 @@ tbl1_unweighted <- dat |>
   modify_caption("**Table 1. Sample Characteristics (N = {N})**") |>
   bold_labels()
 
-# Save gt object
-gt_tbl1 <- as_gt(tbl1_unweighted)
-gtsave(gt_tbl1, file.path(dir_tables, "table1_overall.html"))
 saveRDS(tbl1_unweighted, file.path(dir_tables, "table1_overall.rds"))
+save_gtsummary_docx(tbl1_unweighted, file.path(dir_tables, "table1_overall.docx"))
 message("  Table 1 (unweighted) saved.")
 
 # =============================================================================
@@ -106,9 +113,8 @@ tbl1_bylead <- dat_lead |>
   bold_labels() |>
   modify_spanning_header(starts_with("stat_") ~ "**Blood Lead Quartile**")
 
-gt_tbl1_lead <- as_gt(tbl1_bylead)
-gtsave(gt_tbl1_lead, file.path(dir_tables, "table1_by_lead_quartile.html"))
 saveRDS(tbl1_bylead, file.path(dir_tables, "table1_by_lead_quartile.rds"))
+save_gtsummary_docx(tbl1_bylead, file.path(dir_tables, "table1_by_lead_quartile.docx"))
 message("  Table 1 by lead quartile saved.")
 
 # =============================================================================

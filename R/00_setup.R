@@ -55,27 +55,24 @@ dir_report    <- here("outputs", "report")
 walk(c(dir_raw, dir_processed, dir_codebook, dir_tables, dir_figures, dir_report),
      dir_create)
 
-# --- NHANES cycles -----------------------------------------------------------
-# 2017-2018: suffix _J
-# 2019-March 2020 (pre-pandemic): suffix _P
-nhanes_cycles <- list(
-  "2017-2018"       = "J",
-  "2019-March 2020" = "P"
-)
+# --- NHANES cycle ------------------------------------------------------------
+# 2017-2018 (cycle J) only.
+# The 2019-March 2020 pre-pandemic files (_P) are not hosted at the standard
+# CDC URL pattern and cannot be downloaded programmatically. See methods_notes.md.
 
-# NHANES file names by domain
+# NHANES file names by domain (single cycle)
 nhanes_files <- list(
-  demo   = c("DEMO_J",   "DEMO_P"),
-  metals = c("PBCD_J",   "PBCD_P"),   # Blood Cd, Pb, Hg, Se, Mn
-  crp    = c("CRP_J",    "CRP_P"),    # C-Reactive Protein
-  ghb    = c("GHB_J",    "GHB_P"),    # Glycohemoglobin (HbA1c)
-  tchol  = c("TCHOL_J",  "TCHOL_P"), # Total Cholesterol
-  hdl    = c("HDL_J",    "HDL_P"),   # HDL Cholesterol
-  bp     = c("BPX_J",    "BPXO_P"),  # Blood Pressure (format changed in _P)
-  bpq    = c("BPQ_J",    "BPQ_P"),   # Blood Pressure Questionnaire (BP meds)
-  bmx    = c("BMX_J",    "BMX_P"),   # Body Measures
-  diet   = c("DR1TOT_J", "DR1TOT_P"),# 24-hr Dietary Recall Day 1
-  smq    = c("SMQ_J",    "SMQ_P")    # Smoking Questionnaire
+  demo   = "DEMO_J",
+  metals = "PBCD_J",    # Blood Cd, Pb, Hg, Se, Mn
+  hscrp  = "HSCRP_J",  # High-Sensitivity C-Reactive Protein (NOT CRP_J)
+  ghb    = "GHB_J",    # Glycohemoglobin (HbA1c)
+  tchol  = "TCHOL_J",  # Total Cholesterol
+  hdl    = "HDL_J",    # HDL Cholesterol
+  bp     = "BPX_J",    # Blood Pressure
+  bpq    = "BPQ_J",    # Blood Pressure Questionnaire
+  bmx    = "BMX_J",    # Body Measures
+  diet   = "DR1TOT_J", # 24-hr Dietary Recall Day 1
+  smq    = "SMQ_J"     # Smoking Questionnaire
 )
 
 # --- Key variable names ------------------------------------------------------
@@ -160,13 +157,12 @@ rowmean_na <- function(...) {
 
 #' Quick missingness summary for a data frame
 miss_summary <- function(df) {
-  df |>
-    summarise(across(everything(),
-                     list(n_miss = ~ sum(is.na(.)),
-                          pct_miss = ~ round(mean(is.na(.)) * 100, 1)))) |>
-    pivot_longer(everything(),
-                 names_to = c("variable", ".value"),
-                 names_sep = "_(?=[^_]+$)") |>
+  vars <- names(df)
+  tibble(
+    variable = vars,
+    n_miss   = sapply(df, function(x) sum(is.na(x))),
+    pct_miss = round(sapply(df, function(x) mean(is.na(x)) * 100), 1)
+  ) |>
     arrange(desc(pct_miss))
 }
 

@@ -25,38 +25,25 @@ dat <- readRDS(dat_path)
 # =============================================================================
 message("--- Exporting Table 1 ---")
 
+save_tbl_docx <- function(tbl, path) {
+  tbl |> as_flex_table() |>
+    set_table_properties(layout = "autofit") |>
+    fontsize(size = 9, part = "all") |>
+    save_as_docx(path = path)
+}
+
 tbl1_path <- file.path(dir_tables, "table1_overall.rds")
 if (file.exists(tbl1_path)) {
   tbl1 <- readRDS(tbl1_path)
-
-  # HTML version
-  tbl1 |> as_gt() |>
-    tab_options(table.font.size = "small") |>
-    gtsave(file.path(dir_tables, "table1_overall.html"))
-
-  # Flextable (Word-compatible)
-  tbl1 |> as_flex_table() |>
-    set_table_properties(layout = "autofit") |>
-    fontsize(size = 9, part = "all") |>
-    save_as_docx(path = file.path(dir_tables, "table1_overall.docx"))
-
-  message("  Table 1 → HTML + DOCX")
+  save_tbl_docx(tbl1, file.path(dir_tables, "table1_overall.docx"))
+  message("  Table 1 → DOCX")
 }
 
 tbl1_lead_path <- file.path(dir_tables, "table1_by_lead_quartile.rds")
 if (file.exists(tbl1_lead_path)) {
   tbl1_lead <- readRDS(tbl1_lead_path)
-
-  tbl1_lead |> as_gt() |>
-    tab_options(table.font.size = "small") |>
-    gtsave(file.path(dir_tables, "table1_by_lead_quartile.html"))
-
-  tbl1_lead |> as_flex_table() |>
-    set_table_properties(layout = "autofit") |>
-    fontsize(size = 9, part = "all") |>
-    save_as_docx(path = file.path(dir_tables, "table1_by_lead_quartile.docx"))
-
-  message("  Table 1 by quartile → HTML + DOCX")
+  save_tbl_docx(tbl1_lead, file.path(dir_tables, "table1_by_lead_quartile.docx"))
+  message("  Table 1 by quartile → DOCX")
 }
 
 # =============================================================================
@@ -97,9 +84,8 @@ tbl2_ft <- flextable(tbl2_data) |>
   set_table_properties(layout = "autofit") |>
   autofit()
 
-save_as_html(tbl2_ft, path = file.path(dir_tables, "table2_linear_regression.html"))
 save_as_docx(tbl2_ft, path = file.path(dir_tables, "table2_linear_regression.docx"))
-message("  Table 2 → HTML + DOCX")
+message("  Table 2 → DOCX")
 
 # =============================================================================
 # TABLE 3 — Logistic regression: OR (95% CI) for elevated HbA1c
@@ -134,9 +120,8 @@ tbl3_ft <- flextable(tbl3_data) |>
   set_table_properties(layout = "autofit") |>
   autofit()
 
-save_as_html(tbl3_ft, path = file.path(dir_tables, "table3_logistic_regression.html"))
 save_as_docx(tbl3_ft, path = file.path(dir_tables, "table3_logistic_regression.docx"))
-message("  Table 3 → HTML + DOCX")
+message("  Table 3 → DOCX")
 
 # =============================================================================
 # TABLE 4 — Sensitivity: all metals → HbA1c (fully adjusted)
@@ -169,9 +154,8 @@ tbl4_ft <- flextable(tbl4_data) |>
   set_table_properties(layout = "autofit") |>
   autofit()
 
-save_as_html(tbl4_ft, path = file.path(dir_tables, "table4_sensitivity_metals.html"))
 save_as_docx(tbl4_ft, path = file.path(dir_tables, "table4_sensitivity_metals.docx"))
-message("  Table 4 → HTML + DOCX")
+message("  Table 4 → DOCX")
 
 # =============================================================================
 # Summary of all outputs

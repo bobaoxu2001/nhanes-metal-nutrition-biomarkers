@@ -1,0 +1,4 @@
+model,OR,conf.low,conf.high,p.value
+Model 1: Unadjusted,1.3621,1.1841,1.567,3e-4
+Model 2: Demo-adjusted,0.5964,0.4952,0.7183,3e-4
+Model 3: Fully adjusted,0.6255,0.5228,0.7485,1e-4

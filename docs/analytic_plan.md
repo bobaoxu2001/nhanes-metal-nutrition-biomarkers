@@ -32,14 +32,14 @@ There is no association between log-transformed blood lead and HbA1c after full 
 
 | Criterion | Specification |
 |-----------|---------------|
-| Data source | NHANES 2017–2018 and 2019–March 2020 (pre-pandemic) |
+| Data source | NHANES 2017–2018 (cycle J) |
 | Age | ≥20 years |
 | Eligibility | Participated in Mobile Examination Center (MEC) |
 | Exposure | Available blood lead measurement (PBCD files) |
 | Outcome | Available HbA1c measurement (GHB files) |
 | Exclusions | Missing MEC weight, age <20, missing all metal exposures, missing HbA1c |
 
-Expected final N: ~4,000–7,000 adults (dependent on data availability across cycles)
+Expected final N: ~5,000 adults (achieved analytic sample: 5,014).
 
 ---
 
@@ -92,7 +92,6 @@ Expected final N: ~4,000–7,000 adults (dependent on data availability across c
 | Poverty-income ratio | `INDFMPIR` | Continuous, top-coded at 5 |
 | BMI | `BMXBMI` | Continuous (kg/m²); categorical (WHO) |
 | Smoking status | `SMQ020`, `SMQ040` | Never / Former / Current |
-| NHANES cycle | Derived | 2017–2018 / 2019–March 2020 |
 
 ---
 
@@ -122,7 +121,7 @@ Same model sequence using `family = quasibinomial()` to obtain odds ratios.
 
 ## 9. Handling Survey Design
 
-- Use NHANES combined 4-year weights: `wt_combined = original_weight / 2`
+- Use the NHANES 2-year MEC weight `WTMEC2YR` directly (single-cycle analysis; no pooling adjustment).
 - Design object: `svydesign(ids = ~psu, strata = ~strata, weights = ~wt_mec, nest = TRUE)`
 - Option: `survey.lonely.psu = "adjust"` for strata with single PSU
 

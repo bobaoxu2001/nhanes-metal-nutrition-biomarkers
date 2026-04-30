@@ -38,31 +38,57 @@ base_covs  <- c("log_lead", "hba1c", "age", "sex", "race_eth")
 full_covs  <- c(base_covs, "educ", "pir", "bmi", "smoke_status", "fiber_z")
 binary_covs <- c(full_covs[full_covs != "hba1c"], "hba1c_elevated")
 
-complete_full  <- dat |> select(all_of(full_covs),  seqn) |> drop_na()
-complete_bin   <- dat |> select(all_of(binary_covs), seqn) |> drop_na()
+complete_full  <- dat |> select(all_of(full_covs),  SEQN) |> drop_na()
+complete_bin   <- dat |> select(all_of(binary_covs), SEQN) |> drop_na()
 
-svy_full <- subset(svy, seqn %in% complete_full$seqn)
-svy_bin  <- subset(svy, seqn %in% complete_bin$seqn)
+svy_full <- subset(svy, SEQN %in% complete_full$SEQN)
+svy_bin  <- subset(svy, SEQN %in% complete_bin$SEQN)
 
 message(glue("  Analytic N for continuous models: {nrow(complete_full)}"))
 message(glue("  Analytic N for binary models:    {nrow(complete_bin)}"))
 
 # =============================================================================
 # Helper: tidy survey model with 95% CI
+#
+# NOTE ON DEGREES OF FREEDOM:
+#   NHANES 2017-2018 has 15 strata × 2 PSUs → 15 design df.
+#   Fully adjusted models have ~18 parameters → df.residual < 0.
+#   When df.residual < 0, we use a normal approximation (df = Inf, z = 1.96),
+#   which is standard for large NHANES samples (n > 3,000) and recommended
+#   by NCHS when the model saturates the design df.
+#   p-values from summary() use the survey package's internal Wald test.
 # =============================================================================
-tidy_svy <- function(svy_model, conf_int = TRUE, exponentiate = FALSE) {
-  coefs <- coef(svy_model)
-  ses   <- sqrt(diag(vcov(svy_model)))
-  df_res <- svy_model$df.residual
+tidy_svy <- function(svy_model, exponentiate = FALSE) {
+  sm    <- summary(svy_model)$coefficients   # Est, SE, t-value, p-value
+  coefs <- sm[, 1]
+  ses   <- sm[, 2]
+  pvals <- sm[, 4]
+
+  # Determine effective df: use model df if positive, else design df, else Inf
+  df_model  <- svy_model$df.residual
+  df_design <- tryCatch(degf(svy_model$survey.design), error = function(e) Inf)
+  df_use    <- if (!is.null(df_model) && is.finite(df_model) && df_model > 0) {
+    df_model
+  } else if (is.finite(df_design) && df_design > 0) {
+    df_design
+  } else {
+    Inf   # normal approximation: appropriate for large n (>3000)
+  }
+
+  z_crit  <- qt(0.975, df = df_use)   # 1.96 when df = Inf
+  tstats  <- coefs / ses
+  # Recompute p-values with the effective df (avoids NaN from negative df.residual)
+  pvals_adj <- 2 * pt(abs(tstats), df = df_use, lower.tail = FALSE)
 
   res <- tibble(
-    term      = names(coefs),
+    term      = rownames(sm),
     estimate  = coefs,
     std.error = ses,
-    statistic = coefs / ses,
-    p.value   = 2 * pt(abs(coefs / ses), df = df_res, lower.tail = FALSE),
-    conf.low  = coefs - qt(.975, df_res) * ses,
-    conf.high = coefs + qt(.975, df_res) * ses
+    statistic = tstats,
+    p.value   = pvals_adj,
+    conf.low  = coefs - z_crit * ses,
+    conf.high = coefs + z_crit * ses,
+    df_used   = df_use
   )
 
   if (exponentiate) {
@@ -162,8 +188,8 @@ message("\n--- Sensitivity: cadmium and mercury fully-adjusted models ---")
 # Cadmium complete-case subset
 cad_covs <- c("log_cad", "hba1c", "age", "sex", "race_eth",
               "educ", "pir", "bmi", "smoke_status", "fiber_z")
-dat_cad   <- dat |> select(all_of(cad_covs), seqn) |> drop_na()
-svy_cad   <- subset(svy, seqn %in% dat_cad$seqn)
+dat_cad   <- dat |> select(all_of(cad_covs), SEQN) |> drop_na()
+svy_cad   <- subset(svy, SEQN %in% dat_cad$SEQN)
 
 m_cad_svy <- svyglm(hba1c ~ log_cad + age + sex + race_eth +
                       educ + pir + bmi + smoke_status + fiber_z,
@@ -173,8 +199,8 @@ m_cad_svy <- svyglm(hba1c ~ log_cad + age + sex + race_eth +
 # Mercury complete-case subset
 hg_covs  <- c("log_hg",  "hba1c", "age", "sex", "race_eth",
               "educ", "pir", "bmi", "smoke_status", "fiber_z")
-dat_hg   <- dat |> select(all_of(hg_covs), seqn) |> drop_na()
-svy_hg   <- subset(svy, seqn %in% dat_hg$seqn)
+dat_hg   <- dat |> select(all_of(hg_covs), SEQN) |> drop_na()
+svy_hg   <- subset(svy, SEQN %in% dat_hg$SEQN)
 
 m_hg_svy <- svyglm(hba1c ~ log_hg + age + sex + race_eth +
                      educ + pir + bmi + smoke_status + fiber_z,
