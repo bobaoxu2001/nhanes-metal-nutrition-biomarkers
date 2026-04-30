@@ -450,21 +450,21 @@ knitr::include_graphics(here("outputs", "figures", "fig07_metals_forest.png"))
 
 ## Interpretation
 
-These findings add to a growing cross-sectional literature linking environmental metal exposures to glycemic dysregulation in the general U.S. adult population. The positive association between blood lead and HbA1c is consistent with prior NHANES analyses [@Navas-Acien2016] and plausible through mechanisms including pancreatic β-cell damage, impaired insulin secretion, and peripheral insulin resistance mediated by oxidative stress and mitochondrial dysfunction.
+These findings contribute to the cross-sectional literature on environmental metal exposures and glycemic biomarkers in U.S. adults. In this sample, the unadjusted association between log blood lead and HbA1c was small and not statistically significant, while the fully adjusted association was inverse and statistically significant. **This pattern should not be read as evidence of a protective effect of lead.** It is more consistent with negative confounding by demographic and socioeconomic factors that are independently associated with both blood-lead burden and glycemic control, possibly compounded by selection processes, the timing window captured by blood-lead measurement (recent rather than cumulative exposure), and model specification under residual confounding.
 
-The attenuation of the lead-HbA1c association from the unadjusted to fully adjusted model illustrates the importance of controlling for socioeconomic confounders: lower-income and less-educated individuals tend to have both higher metal exposures and worse glycemic control, and failure to adjust could produce spurious or inflated estimates.
+Prior NHANES analyses have reported positive associations between metal exposures and dysglycemia under different exposure metrics, study periods, or modeling choices [@Navas-Acien2016]. The contrast with the present adjusted estimate underscores that observational associations between long-term metal burden and glycemia are sensitive to confounding structure and are not consistently reproducible across analytic decisions. Mechanistic claims (β-cell damage, oxidative stress) come from experimental and clinical literatures and cannot be evaluated with these data.
 
-The interaction analysis examined whether dietary fiber modified the lead-HbA1c relationship. Fiber intake may reduce gut absorption of ingested lead and cadmium through chelation and shortened transit time, potentially buffering cardiometabolic effects. The formal test of interaction provides evidence on whether dietary quality is a relevant effect modifier in this relationship.
+The lead × dietary-fiber interaction was examined to assess whether dietary quality modifies the lead–HbA1c association at the population level. Any modification observed should likewise be interpreted as a statistical interaction in an observational dataset, not a demonstration that fiber buffers the toxicokinetic effect of lead.
 
 ## Limitations
 
-1. **Cross-sectional design:** NHANES is a cross-sectional survey. Causal inference is not possible; observed associations may be confounded by unmeasured factors or reflect reverse causation.
+1. **Cross-sectional design — no causal inference:** NHANES is a single-time-point survey. Exposure and outcome are measured contemporaneously, so temporal ordering cannot be established and reverse causation cannot be excluded. All estimates in this report should be read as adjusted statistical associations, not effect sizes of a hypothetical intervention on lead.
 
-2. **Single-day dietary recall:** Day 1 dietary data from a 24-hour recall represents only one day of intake and may not reflect habitual dietary patterns. Measurement error in dietary data could attenuate associations involving nutrition variables.
+2. **Residual and unmeasured confounding:** Despite adjustment for age, sex, race/ethnicity, education, poverty-income ratio, BMI, smoking, and dietary fiber, residual confounding from unmeasured factors — occupational exposures, residential proximity to pollution sources, co-exposure to other environmental contaminants, physical activity, dietary supplement use, and medication use beyond antihypertensives — is likely. Confounding is the most plausible explanation for the direction reversal between unadjusted and fully adjusted lead–HbA1c estimates.
 
-3. **Blood versus tissue metals:** Blood lead and mercury reflect recent exposure, while cadmium primarily reflects cumulative kidney burden. Blood measurements may not capture long-term exposure relevant to chronic disease endpoints.
+3. **Dietary recall measurement error:** Dietary fiber and other nutrition variables are derived from a single Day-1 24-hour recall, which is subject to reporting error and may not reflect habitual intake. This non-differential measurement error generally biases interaction and adjustment effects toward the null.
 
-4. **Unmeasured confounders:** Occupational exposures, co-exposures to other metals or pollutants, physical activity, medication use (other than antihypertensives), and dietary supplement use were not fully adjusted for.
+4. **Blood metals reflect recent exposure, not lifetime burden:** Blood lead has a half-life of approximately 35 days and reflects recent exposure rather than cumulative bone burden; blood mercury similarly reflects recent dietary intake. Cadmium has a longer half-life and better reflects cumulative kidney burden, but is still imperfectly aligned with the long-term exposure window most relevant to chronic glycemic outcomes. NHANES does not measure bone lead.
 
 5. **Single cycle:** This analysis uses only NHANES 2017–2018 (one 2-year cycle). Results may not generalize to more recent periods; pooling additional cycles in future work could improve precision and temporal scope.
 
@@ -472,7 +472,7 @@ The interaction analysis examined whether dietary fiber modified the lead-HbA1c 
 
 ## Reproducibility Statement
 
-This analysis is fully reproducible from publicly available data. All R code is available in the `R/` directory and can be executed in sequence (scripts 00–07) using the `here` package for portable file paths. Raw data are downloaded programmatically from the CDC NHANES API via `nhanesA`. The analytic dataset is saved as `data/processed/analysis_dataset_v2.rds`. This report is rendered using Quarto 1.x from `report/nhanes_metal_nutrition_biomarkers.qmd`.
+This analysis is fully reproducible from publicly available data. All R code is in the `R/` directory and can be executed in sequence (scripts 00–07) using the `here` package for portable file paths. Raw NHANES `.XPT` files are downloaded directly from the CDC public data repository via `curl` and `haven::read_xpt()`. The analytic dataset is saved as `data/processed/analysis_dataset_v2.rds`. This report is rendered using Quarto from `report/nhanes_metal_nutrition_biomarkers.qmd`. The full pipeline can be run end-to-end with `Rscript run_all.R`.
 
 **To reproduce:**
 ```bash

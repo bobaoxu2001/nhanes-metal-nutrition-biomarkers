@@ -14,7 +14,7 @@ This project examines whether **blood metal concentrations** (lead, cadmium, mer
 
 **Final analytic sample:** 5,014 U.S. adults (≥20 years) from NHANES 2017–2018, with valid blood metal and HbA1c measurements.
 
-**Headline result:** After full adjustment for demographic, socioeconomic, behavioral, and dietary factors, log blood lead was inversely associated with HbA1c (β = −0.21, 95% CI: −0.28, −0.15; p < 0.001), reflecting strong negative confounding by socioeconomic position. The unadjusted effect was small and non-significant.
+**Headline result:** After full adjustment for demographic, socioeconomic, behavioral, and dietary factors, log blood lead was inversely associated with HbA1c (β = −0.21, 95% CI: −0.28, −0.15; p < 0.001), while the unadjusted association was small and non-significant. Because this is a cross-sectional observational analysis, this should be interpreted as an adjusted statistical association rather than evidence of a protective effect; the direction reversal between the unadjusted and adjusted models may reflect residual confounding, selection, the timing window captured by blood-lead measurement, or model specification, and warrants further longitudinal investigation.
 
 ---
 
@@ -93,7 +93,8 @@ nhanes-metal-nutrition-biomarkers/
 ├── README.md
 ├── LICENSE
 ├── nhanes-metal-nutrition-biomarkers.Rproj
-├── package_setup.R
+├── package_setup.R                         ← Install R package dependencies
+├── run_all.R                               ← One-command end-to-end pipeline runner
 │
 ├── R/
 │   ├── 00_setup.R                  ← Libraries, paths, helper functions
@@ -135,17 +136,20 @@ nhanes-metal-nutrition-biomarkers/
 - **Quarto** ≥ 1.3
 - Active internet connection (CDC NHANES download)
 
-### Steps
+### One-command reproduction (recommended)
 
 ```bash
-# 1. Clone
 git clone https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers.git
 cd nhanes-metal-nutrition-biomarkers
+Rscript package_setup.R    # install required R packages
+Rscript run_all.R          # runs all 8 scripts in order, then renders the Quarto report
+```
 
-# 2. Install packages (from R)
-Rscript package_setup.R
+`run_all.R` sources scripts `R/00_setup.R` → `R/07_export_tables_figures.R` in sequence, prints a timing banner for each step, and stops with an informative error if any step fails. It then renders the Quarto report to HTML and PDF (if `quarto` is on PATH).
 
-# 3. Run pipeline
+### Step-by-step (for development)
+
+```bash
 Rscript R/00_setup.R
 Rscript R/01_download_data.R       # ~5–15 min on first run
 Rscript R/02_clean_merge_data.R
@@ -154,8 +158,6 @@ Rscript R/04_descriptive_analysis.R
 Rscript R/05_regression_models.R
 Rscript R/06_visualizations.R
 Rscript R/07_export_tables_figures.R
-
-# 4. Render report
 quarto render report/nhanes_metal_nutrition_biomarkers.qmd
 ```
 

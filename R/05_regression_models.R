@@ -226,27 +226,59 @@ print(sensitivity_results)
 write_csv(sensitivity_results, file.path(dir_tables, "sensitivity_all_metals_hba1c.csv"))
 
 # =============================================================================
-# STRATIFIED: Lead → HbA1c by fiber tertile
+# STRATIFIED: Lead → HbA1c by fiber tertile (survey-weighted)
+#
+# We compute fiber tertile cutpoints on the complete-case analytic sample,
+# attach the tertile factor to the full data via SEQN, then refit the fully
+# adjusted lead → HbA1c model within each tertile using svyglm() on a subset
+# of the survey design. This preserves the NHANES weights/strata/PSUs
+# in each stratum-specific estimate.
 # =============================================================================
-message("\n--- Stratified models: lead × fiber ---")
+message("\n--- Stratified survey-weighted models: lead × fiber tertile ---")
 
-dat_strat <- dat |>
+dat_strat_cc <- dat |>
   filter(!is.na(log_lead) & !is.na(hba1c) & !is.na(fiber_g) &
            !is.na(age) & !is.na(sex) & !is.na(race_eth) &
            !is.na(educ) & !is.na(pir) & !is.na(bmi) & !is.na(smoke_status)) |>
-  mutate(fiber_tertile = ntile(fiber_g, 3) |> factor(labels = c("Low", "Medium", "High")))
+  mutate(fiber_tertile = ntile(fiber_g, 3) |>
+           factor(labels = c("Low", "Medium", "High")))
 
-strat_results <- dat_strat |>
-  group_by(fiber_tertile) |>
-  summarise(
-    n         = n(),
-    beta_lead = lm(hba1c ~ log_lead + age + sex + race_eth + educ + pir + bmi + smoke_status)$coefficients["log_lead"],
-    .groups = "drop"
+# Attach tertile back to full data so the survey design retains all covariates
+dat_with_tertile <- dat |>
+  left_join(dat_strat_cc |> select(SEQN, fiber_tertile), by = "SEQN")
+
+svy_strat <- svydesign(
+  ids     = ~psu,
+  strata  = ~strata,
+  weights = ~wt_mec,
+  data    = dat_with_tertile,
+  nest    = TRUE
+)
+
+fit_stratum <- function(level) {
+  sub <- subset(svy_strat, fiber_tertile == level &
+                  SEQN %in% dat_strat_cc$SEQN)
+  m <- svyglm(hba1c ~ log_lead + age + sex + race_eth +
+                educ + pir + bmi + smoke_status,
+              design = sub, family = gaussian())
+  td <- tidy_svy(m) |> filter(term == "log_lead")
+  tibble(
+    fiber_tertile = level,
+    n             = nrow(dat_strat_cc |> filter(fiber_tertile == level)),
+    beta_lead     = td$estimate,
+    conf.low      = td$conf.low,
+    conf.high     = td$conf.high,
+    p.value       = td$p.value
   )
+}
 
-message("  Stratified β (lead→HbA1c) by fiber tertile:")
+strat_results <- bind_rows(lapply(levels(dat_strat_cc$fiber_tertile), fit_stratum)) |>
+  mutate(across(where(is.numeric), ~ round(., 4)))
+
+message("  Survey-weighted β (lead→HbA1c) by fiber tertile:")
 print(strat_results)
-write_csv(strat_results, file.path(dir_tables, "stratified_lead_hba1c_by_fiber.csv"))
+write_csv(strat_results,
+          file.path(dir_tables, "stratified_lead_hba1c_by_fiber_svy.csv"))
 
 # =============================================================================
 # Save all model objects for use in visualizations
