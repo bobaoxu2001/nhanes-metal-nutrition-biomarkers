@@ -1,0 +1,58 @@
+name: Full Pipeline Render
+
+on:
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R 4.3
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.3'
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+      - name: Install R packages
+        run: |
+          Rscript package_setup.R
+
+      - name: Run full pipeline
+        run: |
+          Rscript package_setup.R
+          Rscript run_all.R
+
+      - name: Upload report artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhanes-report
+          path: |
+            report/nhanes_metal_nutrition_biomarkers.html
+            report/nhanes_metal_nutrition_biomarkers.pdf
+
+      - name: Upload figure artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhanes-figures
+          path: outputs/figures/
+
+      - name: Upload table artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhanes-tables
+          path: outputs/tables/

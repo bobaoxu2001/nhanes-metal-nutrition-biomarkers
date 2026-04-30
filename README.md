@@ -2,6 +2,7 @@
 ### A Reproducible Cross-Sectional Analysis of NHANES 2017–2018
 
 [![Structure & Setup Check](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/reproducibility-check.yml/badge.svg)](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/reproducibility-check.yml)
+[![Full Pipeline Render](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/full-pipeline-render.yml/badge.svg)](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/full-pipeline-render.yml)
 [![R](https://img.shields.io/badge/R-≥4.1-blue.svg)](https://cran.r-project.org/)
 [![Data: NHANES 2017–2018](https://img.shields.io/badge/Data-NHANES%202017--2018-green.svg)](https://wwwn.cdc.gov/nchs/nhanes/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -32,11 +33,39 @@ This project examines whether **blood metal concentrations** (lead, cadmium, mer
 
 ---
 
-## Preview
+## Visual Summary
 
-| Exposure distributions | Forest plot of model-adjusted effects | Lead × fiber interaction |
-|:-:|:-:|:-:|
-| ![Exposure histograms](outputs/figures/fig01_exposure_distributions.png) | ![Forest plot](outputs/figures/fig04_forest_plot.png) | ![Interaction](outputs/figures/fig06_interaction_plot.png) |
+Each plot is paired with a plain-language interpretation so reviewers can quickly see not only the output, but also the epidemiologic reasoning behind it.
+
+### 1. Exposure distributions: why log-transform metals?
+
+![Exposure distributions](outputs/figures/fig01_exposure_distributions.png)
+
+**What this shows:** Blood lead, cadmium, and mercury are right-skewed biomarkers, with most adults at low levels and a smaller number of higher-exposure observations.
+
+**Why it matters:** This distribution supports the use of natural-log transformation before regression, a common environmental epidemiology practice for skewed exposure biomarkers.
+
+**Key takeaway:** The analysis begins with a defensible exposure transformation rather than treating raw metal concentrations as normally distributed.
+
+### 2. Sequential model adjustment: lead and HbA1c
+
+![Forest plot of model-adjusted effects](outputs/figures/fig04_forest_plot.png)
+
+**What this shows:** The estimated association between log blood lead and HbA1c changes across unadjusted, demographic-adjusted, and fully adjusted survey-weighted models.
+
+**Why it matters:** The direction reversal after adjustment highlights how demographic and socioeconomic confounding can shape environmental epidemiology findings.
+
+**Key takeaway:** The result is not interpreted as a protective effect of lead; it is treated as evidence that the adjusted association is sensitive to confounding structure and model specification.
+
+### 3. Effect modification: dietary fiber
+
+![Lead by fiber interaction](outputs/figures/fig06_interaction_plot.png)
+
+**What this shows:** The lead-HbA1c relationship is visualized across dietary fiber tertiles.
+
+**Why it matters:** This tests whether nutrition may modify the association between environmental metal exposure and glycemic biomarkers.
+
+**Key takeaway:** The plot is an exploratory visualization; formal inference comes from the survey-weighted lead × fiber interaction model.
 
 📄 **Full report:** [`report/nhanes_metal_nutrition_biomarkers.html`](report/nhanes_metal_nutrition_biomarkers.html) (HTML, self-contained) · [PDF](report/nhanes_metal_nutrition_biomarkers.pdf)
 
@@ -150,7 +179,10 @@ nhanes-metal-nutrition-biomarkers/
 - **Quarto** ≥ 1.3
 - Active internet connection (CDC NHANES download)
 
-> **Note on CI.** The GitHub Actions workflow in `.github/workflows/reproducibility-check.yml` is a *structure-and-setup check* — it verifies that R installs the needed packages, that `R/00_setup.R` sources cleanly, that all numbered scripts parse, and that the expected project structure exists. It does **not** attempt to download the full NHANES data in CI (CDC downloads can be slow or rate-limited on shared runners). Full end-to-end reproduction is available locally via `Rscript run_all.R`.
+> **Note on CI.**
+> - **Structure & Setup Check** (`.github/workflows/reproducibility-check.yml`) runs automatically on push/pull_request. It verifies that R installs the needed packages, that `R/00_setup.R` sources cleanly, that all numbered scripts parse, and that the expected project structure exists.
+> - **Full Pipeline Render** (`.github/workflows/full-pipeline-render.yml`) is available as a manual `workflow_dispatch` action because CDC NHANES downloads can be slow or rate-limited on shared runners.
+> - **Local full reproduction** is available with `Rscript run_all.R`.
 
 ### One-command reproduction (recommended)
 
