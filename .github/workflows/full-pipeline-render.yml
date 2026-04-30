@@ -16,22 +16,67 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3'
+          use-public-rspm: true
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Set up TinyTeX
+        uses: r-lib/actions/setup-tinytex@v2
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libfontconfig1-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff5-dev \
+            libjpeg-dev
 
-      - name: Install R packages
+      - name: Install R package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::tidyverse
+            any::here
+            any::janitor
+            any::haven
+            any::curl
+            any::survey
+            any::srvyr
+            any::broom
+            any::broom.helpers
+            any::gtsummary
+            any::gt
+            any::flextable
+            any::patchwork
+            any::scales
+            any::viridis
+            any::ggpubr
+            any::ggdist
+            any::ggrepel
+            any::RColorBrewer
+            any::glue
+            any::fs
+            any::knitr
+            any::kableExtra
+            any::sessioninfo
+            any::rmarkdown
+            any::quarto
+            any::lubridate
+
+      - name: Verify R packages
         run: |
-          Rscript package_setup.R
+          Rscript -e 'pkgs <- c("tidyverse","here","janitor","haven","survey","srvyr","broom","gtsummary","gt","flextable","patchwork","scales","viridis","glue","fs","knitr","kableExtra","sessioninfo","rmarkdown"); missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]; if (length(missing)) stop("Missing packages: ", paste(missing, collapse = ", ")); cat("All required packages available.\n")'
 
       - name: Run full pipeline
         run: |
-          Rscript package_setup.R
           Rscript run_all.R
 
       - name: Upload report artifacts
