@@ -1,6 +1,7 @@
 # Variable Dictionary
 
 **Project:** Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers  
+**Author:** Allen Xu  
 **Data Source:** NHANES 2017–2018 (cycle J)  
 **Last Updated:** 2025
 

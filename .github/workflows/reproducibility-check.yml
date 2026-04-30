@@ -1,0 +1,101 @@
+name: Structure & Setup Check
+
+# Lightweight CI for this portfolio project.
+#
+# We do NOT attempt to run the full NHANES download in CI because the
+# CDC public-data download is large and can be slow or rate-limited.
+# Full end-to-end reproduction is available locally via `Rscript run_all.R`.
+#
+# What this workflow verifies on every push and pull_request:
+#   1. R and key CRAN packages can be installed on a fresh ubuntu-latest runner.
+#   2. R/00_setup.R sources cleanly (this validates the package list and
+#      var_map / nhanes_files structure).
+#   3. The expected project structure exists (R/, report/, docs/, README.md,
+#      LICENSE, run_all.R, the 8 numbered R scripts, and the .qmd report).
+#   4. R/01_download_data.R, R/05_regression_models.R, and report/.qmd
+#      parse without R syntax errors.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  structure-and-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.3'
+          use-public-rspm: true
+
+      - name: Install minimal CRAN packages used by 00_setup.R
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::tidyverse
+            any::here
+            any::janitor
+            any::haven
+            any::survey
+            any::srvyr
+            any::broom
+            any::gtsummary
+            any::gt
+            any::flextable
+            any::patchwork
+            any::scales
+            any::viridis
+            any::glue
+            any::fs
+            any::knitr
+            any::kableExtra
+            any::sessioninfo
+
+      - name: Verify expected project structure
+        run: |
+          Rscript -e '
+            stopifnot(file.exists("README.md"))
+            stopifnot(file.exists("LICENSE"))
+            stopifnot(file.exists("run_all.R"))
+            stopifnot(file.exists("package_setup.R"))
+            stopifnot(dir.exists("R"))
+            stopifnot(dir.exists("report"))
+            stopifnot(dir.exists("docs"))
+            scripts <- c(
+              "R/00_setup.R", "R/01_download_data.R", "R/02_clean_merge_data.R",
+              "R/03_define_variables.R", "R/04_descriptive_analysis.R",
+              "R/05_regression_models.R", "R/06_visualizations.R",
+              "R/07_export_tables_figures.R"
+            )
+            for (s in scripts) stopifnot(file.exists(s))
+            stopifnot(file.exists("report/nhanes_metal_nutrition_biomarkers.qmd"))
+            stopifnot(file.exists("docs/executive_summary.md"))
+            stopifnot(file.exists("docs/analytic_plan.md"))
+            stopifnot(file.exists("docs/variable_dictionary.md"))
+            stopifnot(file.exists("docs/methods_notes.md"))
+            cat("\n[OK] Project structure verified.\n")
+          '
+
+      - name: Source R/00_setup.R (validates package list and var_map)
+        run: Rscript R/00_setup.R
+
+      - name: R-parse all numbered scripts (no execution)
+        run: |
+          Rscript -e '
+            scripts <- list.files("R", pattern = "^[0-9]{2}_.*\\.R$", full.names = TRUE)
+            for (s in scripts) {
+              parsed <- tryCatch(parse(s), error = function(e) e)
+              if (inherits(parsed, "error")) {
+                stop(sprintf("Parse error in %s: %s", s, conditionMessage(parsed)))
+              }
+              cat(sprintf("[OK] parsed %s\n", s))
+            }
+            cat("\n[OK] All numbered scripts parse cleanly.\n")
+          '

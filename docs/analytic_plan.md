@@ -1,7 +1,7 @@
 # Analytic Plan
 
 **Project:** Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible NHANES Analysis  
-**Author:** Ao Xu  
+**Author:** Allen Xu  
 **Date:** 2025  
 **Status:** Pre-analysis analytic plan for reproducible portfolio project
 

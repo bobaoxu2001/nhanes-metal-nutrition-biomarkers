@@ -3,7 +3,7 @@
 # Project: Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers
 # Purpose: Load libraries, set global options, define helper functions and
 #          constants used across all analysis scripts
-# Author:  Ao Xu
+# Author:  Allen Xu
 # Date:    2025
 # =============================================================================
 

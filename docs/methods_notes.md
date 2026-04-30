@@ -1,7 +1,7 @@
 # Methods Notes
 
 **Project:** Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers  
-**Author:** Ao Xu  
+**Author:** Allen Xu  
 **Purpose:** Document methodological decisions, rationale, and limitations
 
 ---

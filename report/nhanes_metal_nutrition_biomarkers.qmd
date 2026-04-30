@@ -2,7 +2,7 @@
 title: "Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers"
 subtitle: "A Reproducible Cross-Sectional Analysis of NHANES 2017–2018"
 author:
-  - name: "Ao Xu"
+  - name: "Allen Xu"
     affiliation: "New York University"
     email: "ax2183@nyu.edu"
 date: today
@@ -99,11 +99,11 @@ sens_results   <- read_csv(here("outputs", "tables", "sensitivity_all_metals_hba
 
 ## Background
 
-Heavy metal exposures—lead, cadmium, and mercury—remain pervasive environmental health concerns in the United States, despite decades of regulatory efforts. Even at low levels, these metals may disrupt endocrine function, promote oxidative stress, and impair mitochondrial function, all of which are mechanistic pathways to insulin resistance and cardiometabolic disease [@navas2019; @fagerberg2015].
+Heavy metal exposures—lead, cadmium, and mercury—remain pervasive environmental health concerns in the United States, despite decades of regulatory efforts. Even at low levels, these metals may disrupt endocrine function, promote oxidative stress, and impair mitochondrial function — mechanistic pathways that have been proposed in the toxicology and clinical literature as routes from low-level metal exposure to insulin resistance and cardiometabolic disease.
 
-**Lead** is a known neurotoxicant, but growing evidence links low-level lead exposure to hypertension, impaired glucose metabolism, and cardiovascular mortality [@Menke2006; @Muntner2005]. **Cadmium** accumulates in the kidney and has been associated with diabetes and chronic kidney disease at concentrations well below occupational thresholds [@Åkesson2012]. **Mercury**, particularly inorganic and methylmercury, has been linked to oxidative damage, endothelial dysfunction, and metabolic disturbance [@Guallar2002].
+**Lead** is a known neurotoxicant, but a substantial body of population-based evidence has also linked low-level lead exposure to hypertension, impaired glucose metabolism, and cardiovascular mortality. **Cadmium** accumulates in the kidney and has been associated with diabetes and chronic kidney disease at concentrations well below occupational thresholds. **Mercury**, particularly inorganic and methylmercury species, has been associated in some studies with oxidative damage, endothelial dysfunction, and metabolic disturbance.
 
-Diet is a key modulator of metal bioavailability and toxicity. Dietary fiber, calcium, iron, and vitamin C can reduce gastrointestinal absorption of lead and cadmium, and antioxidant nutrients may buffer oxidative damage from metal exposures [@Satarug2003; @Fox1997]. Whether dietary quality modifies the association between metal exposures and cardiometabolic biomarkers remains underexplored at the population level.
+Diet is a key modulator of metal bioavailability and toxicity. Dietary fiber, calcium, iron, and vitamin C have been reported to reduce gastrointestinal absorption of lead and cadmium, and antioxidant nutrients may buffer oxidative damage from metal exposures. Whether dietary quality modifies the population-level association between metal exposures and cardiometabolic biomarkers remains underexplored.
 
 HbA1c (glycated hemoglobin) is an established biomarker of average glycemia over the preceding 2–3 months and a clinical diagnostic criterion for prediabetes (≥5.7%) and diabetes (≥6.5%). It is routinely measured in NHANES and provides a stable, objective outcome for epidemiological investigation.
 
@@ -453,7 +453,7 @@ knitr::include_graphics(here("outputs", "figures", "fig07_metals_forest.png"))
 
 These findings contribute to the cross-sectional literature on environmental metal exposures and glycemic biomarkers in U.S. adults. In this sample, the unadjusted association between log blood lead and HbA1c was small and not statistically significant, while the fully adjusted association was inverse and statistically significant. **This pattern should not be read as evidence of a protective effect of lead.** It is more consistent with negative confounding by demographic and socioeconomic factors that are independently associated with both blood-lead burden and glycemic control, possibly compounded by selection processes, the timing window captured by blood-lead measurement (recent rather than cumulative exposure), and model specification under residual confounding.
 
-Prior NHANES analyses have reported positive associations between metal exposures and dysglycemia under different exposure metrics, study periods, or modeling choices [@Navas-Acien2016]. The contrast with the present adjusted estimate underscores that observational associations between long-term metal burden and glycemia are sensitive to confounding structure and are not consistently reproducible across analytic decisions. Mechanistic claims (β-cell damage, oxidative stress) come from experimental and clinical literatures and cannot be evaluated with these data.
+Prior NHANES analyses have reported positive associations between metal exposures and dysglycemia under different exposure metrics, study periods, or modeling choices. The contrast with the present adjusted estimate underscores that observational associations between long-term metal burden and glycemia are sensitive to confounding structure and are not consistently reproducible across analytic decisions. Mechanistic claims (β-cell damage, oxidative stress) come from experimental and clinical literatures and cannot be evaluated with these data.
 
 The lead × dietary-fiber interaction was examined to assess whether dietary quality modifies the lead–HbA1c association at the population level. Any modification observed should likewise be interpreted as a statistical interaction in an observational dataset, not a demonstration that fiber buffers the toxicokinetic effect of lead.
 

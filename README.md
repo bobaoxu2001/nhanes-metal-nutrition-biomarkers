@@ -1,10 +1,24 @@
 # Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers
 ### A Reproducible Cross-Sectional Analysis of NHANES 2017–2018
 
+[![Structure & Setup Check](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/reproducibility-check.yml/badge.svg)](https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers/actions/workflows/reproducibility-check.yml)
 [![R](https://img.shields.io/badge/R-≥4.1-blue.svg)](https://cran.r-project.org/)
 [![Data: NHANES 2017–2018](https://img.shields.io/badge/Data-NHANES%202017--2018-green.svg)](https://wwwn.cdc.gov/nchs/nhanes/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Made with Quarto](https://img.shields.io/badge/Made%20with-Quarto-39729e.svg)](https://quarto.org/)
+
+---
+
+## Quick Navigation
+
+| If you want to… | Open this |
+|---|---|
+| Read the full research write-up | [`report/nhanes_metal_nutrition_biomarkers.html`](report/nhanes_metal_nutrition_biomarkers.html) (also as [PDF](report/nhanes_metal_nutrition_biomarkers.pdf)) |
+| Read a one-page summary | [`docs/executive_summary.md`](docs/executive_summary.md) |
+| Understand methods and statistical decisions | [`docs/methods_notes.md`](docs/methods_notes.md) |
+| Look up any analysis variable | [`docs/variable_dictionary.md`](docs/variable_dictionary.md) |
+| Reproduce everything in one command | [`run_all.R`](run_all.R) — `Rscript run_all.R` |
+| Inspect the regression code | [`R/05_regression_models.R`](R/05_regression_models.R) |
 
 ---
 
@@ -136,6 +150,8 @@ nhanes-metal-nutrition-biomarkers/
 - **Quarto** ≥ 1.3
 - Active internet connection (CDC NHANES download)
 
+> **Note on CI.** The GitHub Actions workflow in `.github/workflows/reproducibility-check.yml` is a *structure-and-setup check* — it verifies that R installs the needed packages, that `R/00_setup.R` sources cleanly, that all numbered scripts parse, and that the expected project structure exists. It does **not** attempt to download the full NHANES data in CI (CDC downloads can be slow or rate-limited on shared runners). Full end-to-end reproduction is available locally via `Rscript run_all.R`.
+
 ### One-command reproduction (recommended)
 
 ```bash
@@ -182,6 +198,28 @@ saveRDS(haven::read_xpt("PBCD_J.XPT"), "data/raw/PBCD_J.rds")
 
 ---
 
+## What This Demonstrates for Research Teams
+
+This project demonstrates my ability to support epidemiology research teams by turning a research question into a reproducible R analysis pipeline, producing publication-style tables and figures, and documenting analytic decisions clearly enough for faculty, collaborators, and future analysts to audit or extend the work. Every modeling choice (single-cycle weights, log transforms, sequential adjustment, survey-weighted stratification, normal-approximation degrees of freedom) is recorded in `docs/methods_notes.md`; every variable is recorded in `docs/variable_dictionary.md`; and the entire pipeline reproduces with one command (`Rscript run_all.R`).
+
+The work mirrors the rhythm of an academic team: pre-analysis plan → reproducible cleaning → Table 1 → sequential regression → sensitivity analyses → effect-modification analysis → publication-ready report — with honest, association-only interpretation rather than overclaiming.
+
+---
+
+## Quality-Control Checks
+
+- ✅ **Verified NHANES variable names against the actual downloaded XPT files** (e.g., `LBXBPB`, `LBXGH`, `WTMEC2YR`, `SDMVPSU`, `SDMVSTRA`, `LBXHSCRP`).
+- ✅ **Used real CDC/NHANES public data**, downloaded directly from the public CDC repository — not simulated, scraped, or pre-bundled data.
+- ✅ **Used `SEQN` for deterministic multi-file merging** across all 11 NHANES domain files; merge integrity verified by exclusion log.
+- ✅ **Used `SDMVPSU`, `SDMVSTRA`, and `WTMEC2YR`** for survey-weighted analysis via `survey::svydesign(nest = TRUE)`.
+- ✅ **Used single-cycle `WTMEC2YR` directly** (no halving/pooling adjustment), per NCHS analytic guidance for a single 2-year cycle.
+- ✅ **Excluded raw NHANES files from Git** (gitignored `data/raw/` and `data/processed/*.{rds,csv}`); raw data are reproducibly re-downloadable via `R/01_download_data.R`.
+- ✅ **Quarto report rendered from code-generated tables and figures** — no hand-edited numbers; every estimate in the report comes from a CSV produced by `R/05_regression_models.R`.
+- ✅ **Survey-weighted stratified analysis** within each fiber tertile (not naive `lm()`).
+- ✅ **Interpreted results as adjusted statistical associations**, not causal effects; the unadjusted-vs-adjusted direction reversal is explicitly addressed in both the report and the README.
+
+---
+
 ## Skills Demonstrated
 
 - Real public-health data acquisition (programmatic NHANES download)
@@ -217,7 +255,7 @@ This analysis is **cross-sectional and association-based; it does not support ca
 
 ## Author
 
-**Ao Xu** · ax2183@nyu.edu  
+**Allen Xu** · ax2183@nyu.edu  
 New York University
 
 ## License
@@ -226,7 +264,7 @@ MIT — see [LICENSE](LICENSE). NHANES data are public domain.
 
 ## Citation
 
-> Xu A. (2025). *Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible Cross-Sectional Analysis of NHANES 2017–2018.* GitHub. https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers
+> Xu, Allen. (2025). *Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible Cross-Sectional Analysis of NHANES 2017–2018.* GitHub. https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers
 
 **Data citation:**
 > National Center for Health Statistics. National Health and Nutrition Examination Survey Data, 2017–2018. Hyattsville, MD: U.S. Department of Health and Human Services, Centers for Disease Control and Prevention. https://wwwn.cdc.gov/nchs/nhanes/.
