@@ -169,4 +169,4 @@ A cross-sectional survey measures exposure and outcome at the same point in time
 
 ## 9. Data Acquisition
 
-The CRAN `nhanesA` 0.7.x package was found to construct malformed URLs for certain cycle-J files at the time of analysis. To make the pipeline robust we bypass `nhanesA` entirely and download `.XPT` files directly from `https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/` using `curl` (180 s timeout, 3 retries) with `download.file()` as a fallback, then read them via `haven::read_xpt()` and cache as `.rds` in `data/raw/`. See `R/01_download_data.R`.
+For maximum reliability and reproducibility, this project downloads `.XPT` files directly from the CDC NHANES public data repository at `https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/`. Each file is fetched with `curl` (180 s timeout, 3 retries) with `download.file()` as a fallback, then read via `haven::read_xpt()` and cached as `.rds` in `data/raw/`. This avoids any third-party API dependency and remains stable as long as CDC continues to host the public XPT files. See `R/01_download_data.R`.

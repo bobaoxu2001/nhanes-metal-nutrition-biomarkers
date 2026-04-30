@@ -3,7 +3,7 @@
 **Project:** Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers: A Reproducible NHANES Analysis  
 **Author:** Ao Xu  
 **Date:** 2025  
-**Status:** Pre-registered analytic plan (pre-analysis)
+**Status:** Pre-analysis analytic plan for reproducible portfolio project
 
 ---
 
@@ -141,9 +141,8 @@ Same model sequence using `family = quasibinomial()` to obtain odds ratios.
 | Analysis | Description |
 |----------|-------------|
 | All metals | Repeat Model 3 for cadmium and mercury |
-| Fiber stratification | Stratify Model 3 by fiber tertile |
+| Fiber stratification | Stratify Model 3 by fiber tertile (survey-weighted within each tertile) |
 | Exclude diabetes Rx | Sensitivity excluding participants on diabetes medication (if available) |
-| Cycle-specific | Run models within each NHANES cycle separately |
 
 ---
 

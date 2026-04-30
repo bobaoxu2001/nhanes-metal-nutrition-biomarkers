@@ -47,7 +47,7 @@ This project examines whether **blood metal concentrations** (lead, cadmium, mer
 **National Health and Nutrition Examination Survey (NHANES)** — CDC / National Center for Health Statistics. Public domain (U.S. government data).
 
 - Public access: https://wwwn.cdc.gov/nchs/nhanes/
-- **Download method:** Direct XPT download from the CDC public data repository via `curl` + `haven::read_xpt()`, with retry and fallback to `download.file()`. The `nhanesA` API was not used because of an upstream URL-construction bug in cycle-J files; see [`docs/methods_notes.md`](docs/methods_notes.md).
+- **Download method:** Direct XPT download from the CDC public data repository via `curl` + `haven::read_xpt()`, with retry and fallback to `download.file()`. See [`docs/methods_notes.md`](docs/methods_notes.md) and `R/01_download_data.R`.
 
 **NHANES files used (cycle 2017–2018, suffix `_J`):**
 

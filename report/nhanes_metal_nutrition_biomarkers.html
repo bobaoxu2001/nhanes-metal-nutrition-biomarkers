@@ -3342,7 +3342,7 @@ border: 0;
 <section id="research-question" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="research-question"><span class="header-section-number">2</span> Research Question</h2>
 <blockquote class="blockquote">
-<p><em>Are blood or urinary metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?</em></p>
+<p><em>Are blood metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?</em></p>
 </blockquote>
 </section>
 <section id="data-source" class="level2" data-number="3">
@@ -3581,9 +3581,9 @@ border: 0;
 <td style="text-align: left;">2.0.0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">nhanesA</td>
-<td style="text-align: left;">NHANES data download</td>
-<td style="text-align: left;">0.7.2</td>
+<td style="text-align: left;">haven</td>
+<td style="text-align: left;">Read NHANES XPT files (paired with curl for direct CDC download)</td>
+<td style="text-align: left;">2.5.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">broom</td>
@@ -5236,7 +5236,6 @@ text-indent: 25px;
  fontLiberation      0.1.0   2016-10-15 [1] CRAN (R 4.1.0)
  fontquiver          0.2.1   2017-02-01 [1] CRAN (R 4.1.0)
  forcats           * 1.0.0   2023-01-29 [1] CRAN (R 4.1.2)
- foreign             0.8-81  2020-12-22 [1] CRAN (R 4.1.2)
  fs                * 1.6.2   2023-04-25 [1] CRAN (R 4.1.2)
  gdtools             0.3.3   2023-03-27 [1] CRAN (R 4.1.2)
  generics            0.1.2   2022-01-31 [1] CRAN (R 4.1.2)
@@ -5271,13 +5270,11 @@ text-indent: 25px;
  mime                0.12    2021-09-28 [1] CRAN (R 4.1.0)
  mitools             2.4     2019-04-26 [1] CRAN (R 4.1.0)
  munsell             0.5.0   2018-06-12 [1] CRAN (R 4.1.0)
- nhanesA           * 0.7.2   2023-02-17 [1] CRAN (R 4.1.2)
  officer             0.6.2   2023-03-28 [1] CRAN (R 4.1.2)
  openssl             2.0.4   2022-10-17 [1] CRAN (R 4.1.2)
  patchwork         * 1.1.2   2022-08-19 [1] CRAN (R 4.1.2)
  pillar              1.9.0   2023-03-22 [1] CRAN (R 4.1.2)
  pkgconfig           2.0.3   2019-09-22 [1] CRAN (R 4.1.0)
- plyr                1.8.7   2022-03-24 [1] CRAN (R 4.1.2)
  png                 0.1-7   2013-12-03 [1] CRAN (R 4.1.0)
  promises            1.2.0.1 2021-02-11 [1] CRAN (R 4.1.0)
  purrr             * 1.0.2   2023-08-10 [1] CRAN (R 4.1.2)
@@ -5727,7 +5724,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Research Question</span></span>
 <span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *Are blood or urinary metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?*</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *Are blood metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?*</span></span>
 <span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data Source</span></span>
 <span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
@@ -5818,309 +5815,310 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Key R Packages&quot;</span></span>
 <span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>pkg_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">Package =</span> <span class="fu">c</span>(<span class="st">&quot;survey&quot;</span>, <span class="st">&quot;srvyr&quot;</span>, <span class="st">&quot;gtsummary&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;nhanesA&quot;</span>, <span class="st">&quot;broom&quot;</span>),</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">Package =</span> <span class="fu">c</span>(<span class="st">&quot;survey&quot;</span>, <span class="st">&quot;srvyr&quot;</span>, <span class="st">&quot;gtsummary&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;haven&quot;</span>, <span class="st">&quot;broom&quot;</span>),</span>
 <span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">Purpose =</span> <span class="fu">c</span>(<span class="st">&quot;Survey-weighted regression&quot;</span>, <span class="st">&quot;Tidyverse-style survey wrappers&quot;</span>,</span>
 <span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Publication tables&quot;</span>, <span class="st">&quot;Data visualization&quot;</span>, <span class="st">&quot;Data wrangling&quot;</span>,</span>
-<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;NHANES data download&quot;</span>, <span class="st">&quot;Tidy model output&quot;</span>),</span>
-<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">Version =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;survey&quot;</span>, <span class="st">&quot;srvyr&quot;</span>, <span class="st">&quot;gtsummary&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;nhanesA&quot;</span>, <span class="st">&quot;broom&quot;</span>),</span>
-<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>                   <span class="cf">function</span>(p) <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(p)))</span>
-<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(pkg_tbl) <span class="sc">|&gt;</span></span>
-<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;condensed&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Results</span></span>
-<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sample Characteristics</span></span>
-<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table1}</span></span>
-<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table1</span></span>
-<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 1. Characteristics of Analytic Sample (NHANES 2017–2018)&quot;</span></span>
-<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate Table 1 in-document</span></span>
-<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>table1_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;race_eth&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;pir_cat&quot;</span>, <span class="st">&quot;smoke_status&quot;</span>,</span>
-<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;bmi&quot;</span>, <span class="st">&quot;blood_lead&quot;</span>, <span class="st">&quot;blood_cad&quot;</span>, <span class="st">&quot;blood_hg&quot;</span>,</span>
-<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;hba1c&quot;</span>, <span class="st">&quot;hba1c_elevated&quot;</span>, <span class="st">&quot;fiber_g&quot;</span>, <span class="st">&quot;energy_kcal&quot;</span>)</span>
-<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>table1_vars <span class="ot">&lt;-</span> <span class="fu">intersect</span>(table1_vars, <span class="fu">names</span>(dat))</span>
-<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
-<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(table1_vars)) <span class="sc">|&gt;</span></span>
-<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_summary</span>(</span>
-<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">list</span>(</span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_continuous</span>()  <span class="sc">~</span> <span class="st">&quot;{mean} ({sd})&quot;</span>,</span>
-<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">&quot;{n} ({p}%)&quot;</span></span>
-<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits    =</span> <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing   =</span> <span class="st">&quot;ifany&quot;</span>,</span>
-<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_text =</span> <span class="st">&quot;Missing&quot;</span></span>
-<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_n</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_header</span>(label <span class="sc">~</span> <span class="st">&quot;**Characteristic**&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold_labels</span>()</span>
-<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table1-bylead}</span></span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table1-bylead</span></span>
-<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 1b. Sample Characteristics by Blood Lead Quartile&quot;</span></span>
-<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
-<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(q_lead)) <span class="sc">|&gt;</span></span>
-<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(table1_vars[<span class="sc">!</span>table1_vars <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;blood_lead&quot;</span>,<span class="st">&quot;blood_cad&quot;</span>,<span class="st">&quot;blood_hg&quot;</span>)],</span>
-<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;q_lead&quot;</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_summary</span>(</span>
-<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>    <span class="at">by       =</span> q_lead,</span>
-<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">list</span>(</span>
-<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_continuous</span>()  <span class="sc">~</span> <span class="st">&quot;{mean} ({sd})&quot;</span>,</span>
-<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">&quot;{n} ({p}%)&quot;</span></span>
-<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits    =</span> <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing   =</span> <span class="st">&quot;no&quot;</span></span>
-<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_overall</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_header</span>(label <span class="sc">~</span> <span class="st">&quot;**Characteristic**&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_spanning_header</span>(<span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>) <span class="sc">~</span> <span class="st">&quot;**Blood Lead Quartile**&quot;</span>)</span>
-<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### Missingness</span></span>
-<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r missingness}</span></span>
-<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-missingness</span></span>
-<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Missingness Summary for Key Analysis Variables&quot;</span></span>
-<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>miss_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blood_lead&quot;</span>, <span class="st">&quot;blood_cad&quot;</span>, <span class="st">&quot;blood_hg&quot;</span>, <span class="st">&quot;hba1c&quot;</span>,</span>
-<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;crp&quot;</span>, <span class="st">&quot;total_chol&quot;</span>, <span class="st">&quot;hdl_chol&quot;</span>, <span class="st">&quot;sbp&quot;</span>, <span class="st">&quot;dbp&quot;</span>,</span>
-<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;bmi&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;pir&quot;</span>, <span class="st">&quot;smoke_status&quot;</span>,</span>
-<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;fiber_g&quot;</span>, <span class="st">&quot;vitc_mg&quot;</span>, <span class="st">&quot;energy_kcal&quot;</span>)</span>
-<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>miss_vars <span class="ot">&lt;-</span> <span class="fu">intersect</span>(miss_vars, <span class="fu">names</span>(dat))</span>
-<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable    =</span> miss_vars,</span>
-<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">N Missing</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x))),</span>
-<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Missing</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">is.na</span>(x)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)),</span>
-<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">N Complete</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">nrow</span>(dat) <span class="sc">-</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span>
-<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">% Missing</span><span class="st">`</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;condensed&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exposure Distributions</span></span>
-<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-distributions}</span></span>
-<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-distributions</span></span>
-<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 1. Distribution of Blood Metal Concentrations (Raw and Log-Transformed)&quot;</span></span>
-<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 10</span></span>
-<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
-<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig01_exposure_distributions.png&quot;</span>))</span>
-<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-outcome}</span></span>
-<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-outcome</span></span>
-<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 2. Distribution of Primary Outcome: HbA1c&quot;</span></span>
-<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 10</span></span>
-<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig02_outcome_distributions.png&quot;</span>))</span>
-<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exposure–Outcome Relationship</span></span>
-<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-scatter}</span></span>
-<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-scatter</span></span>
-<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 3. Scatter Plot: Log Blood Lead vs. HbA1c (LOESS and Linear Fit)&quot;</span></span>
-<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5.5</span></span>
-<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig03_exposure_outcome_scatter.png&quot;</span>))</span>
-<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regression Results</span></span>
-<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Linear Regression: Blood Lead → HbA1c</span></span>
-<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table2}</span></span>
-<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table2</span></span>
-<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 2. Association of Log Blood Lead with HbA1c (%) — Survey-Weighted Linear Regression&quot;</span></span>
-<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a>linear_results <span class="sc">|&gt;</span></span>
-<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
-<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
-<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
-<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
-<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(std.error, <span class="dv">4</span>)</span>
-<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Model =</span> model, <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">paste0</span>(</span>
-<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;β = change in HbA1c (%) per 1-unit increase in ln(blood lead, µg/dL). &quot;</span>,</span>
-<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 1: Unadjusted. Model 2: + age, sex, race/ethnicity. &quot;</span>,</span>
-<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 3: + education, PIR, BMI, smoking, dietary fiber. &quot;</span>,</span>
-<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 4: Model 3 + lead×fiber interaction.&quot;</span></span>
-<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-forest}</span></span>
-<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-forest</span></span>
-<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 4. Forest Plot: Association of Blood Lead with HbA1c Across Models&quot;</span></span>
-<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
-<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig04_forest_plot.png&quot;</span>))</span>
-<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-quartile}</span></span>
-<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-quartile</span></span>
-<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 5. Mean HbA1c by Blood Lead Quartile&quot;</span></span>
-<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig05_hba1c_by_lead_quartile.png&quot;</span>))</span>
-<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Logistic Regression: Blood Lead → Elevated HbA1c (≥5.7%)</span></span>
-<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table3}</span></span>
-<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table3</span></span>
-<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 3. Association of Log Blood Lead with Elevated HbA1c (≥5.7%) — Survey-Weighted Logistic Regression&quot;</span></span>
-<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a>logit_results <span class="sc">|&gt;</span></span>
-<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">OR (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
-<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
-<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
-<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
-<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Model =</span> model, <span class="st">`</span><span class="at">OR (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">paste0</span>(</span>
-<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;OR = odds ratio per 1-unit increase in ln(blood lead, µg/dL). &quot;</span>,</span>
-<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Outcome: HbA1c ≥5.7% (prediabetes/diabetes threshold). &quot;</span>,</span>
-<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Models adjusted as in Table 2.&quot;</span></span>
-<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-396"><a href="#cb3-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Interaction: Blood Lead × Dietary Fiber</span></span>
-<span id="cb3-398"><a href="#cb3-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-399"><a href="#cb3-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-interaction}</span></span>
-<span id="cb3-400"><a href="#cb3-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-interaction</span></span>
-<span id="cb3-401"><a href="#cb3-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 6. Interaction: Blood Lead × Dietary Fiber on HbA1c&quot;</span></span>
-<span id="cb3-402"><a href="#cb3-402" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb3-403"><a href="#cb3-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
-<span id="cb3-404"><a href="#cb3-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-405"><a href="#cb3-405" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig06_interaction_plot.png&quot;</span>))</span>
-<span id="cb3-406"><a href="#cb3-406" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-407"><a href="#cb3-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-408"><a href="#cb3-408" aria-hidden="true" tabindex="-1"></a><span class="in">```{r interaction-pvalue}</span></span>
-<span id="cb3-409"><a href="#cb3-409" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-410"><a href="#cb3-410" aria-hidden="true" tabindex="-1"></a>int_model_row <span class="ot">&lt;-</span> linear_results <span class="sc">|&gt;</span></span>
-<span id="cb3-411"><a href="#cb3-411" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead:fiber_z&quot;</span>)</span>
-<span id="cb3-412"><a href="#cb3-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-413"><a href="#cb3-413" aria-hidden="true" tabindex="-1"></a>int_est <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(int_model_row) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">round</span>(int_model_row<span class="sc">$</span>estimate[<span class="dv">1</span>], <span class="dv">4</span>) <span class="cf">else</span> <span class="cn">NA</span></span>
-<span id="cb3-414"><a href="#cb3-414" aria-hidden="true" tabindex="-1"></a>int_p   <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(int_model_row) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb3-415"><a href="#cb3-415" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (int_model_row<span class="sc">$</span>p.value[<span class="dv">1</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>) <span class="st">&quot;&lt;0.001&quot;</span> <span class="cf">else</span> <span class="fu">as.character</span>(<span class="fu">round</span>(int_model_row<span class="sc">$</span>p.value[<span class="dv">1</span>], <span class="dv">3</span>))</span>
-<span id="cb3-416"><a href="#cb3-416" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="st">&quot;not estimable&quot;</span></span>
-<span id="cb3-417"><a href="#cb3-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-418"><a href="#cb3-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-419"><a href="#cb3-419" aria-hidden="true" tabindex="-1"></a>The interaction term (log blood lead × dietary fiber z-score) had a coefficient of β = <span class="in">`r int_est`</span> (p = <span class="in">`r int_p`</span>), suggesting <span class="in">`r ifelse(is.na(int_est), &quot;the interaction could not be estimated in the available data.&quot;, if(!is.na(int_est) &amp; !is.na(suppressWarnings(as.numeric(int_p)))) { if(as.numeric(int_p) &lt; 0.05) &quot;a statistically significant modification of the lead-HbA1c association by dietary fiber intake.&quot; else &quot;no statistically significant modification of the lead-HbA1c association by dietary fiber intake.&quot; } else &quot;marginal evidence of effect modification by dietary fiber intake.&quot;)`</span>.</span>
-<span id="cb3-420"><a href="#cb3-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-421"><a href="#cb3-421" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sensitivity Analyses: All Metals</span></span>
-<span id="cb3-422"><a href="#cb3-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-423"><a href="#cb3-423" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table4}</span></span>
-<span id="cb3-424"><a href="#cb3-424" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table4</span></span>
-<span id="cb3-425"><a href="#cb3-425" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 4. Sensitivity Analysis: Association of All Blood Metals with HbA1c (Fully Adjusted)&quot;</span></span>
-<span id="cb3-426"><a href="#cb3-426" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-427"><a href="#cb3-427" aria-hidden="true" tabindex="-1"></a>sens_results <span class="sc">|&gt;</span></span>
-<span id="cb3-428"><a href="#cb3-428" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-429"><a href="#cb3-429" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
-<span id="cb3-430"><a href="#cb3-430" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-431"><a href="#cb3-431" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
-<span id="cb3-432"><a href="#cb3-432" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
-<span id="cb3-433"><a href="#cb3-433" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
-<span id="cb3-434"><a href="#cb3-434" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-435"><a href="#cb3-435" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-436"><a href="#cb3-436" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Exposure =</span> exposure, <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-437"><a href="#cb3-437" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-438"><a href="#cb3-438" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-439"><a href="#cb3-439" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="st">&quot;All models adjusted for age, sex, race/ethnicity, education, PIR, BMI, smoking, dietary fiber. Survey-weighted.&quot;</span>)</span>
-<span id="cb3-440"><a href="#cb3-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-441"><a href="#cb3-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-442"><a href="#cb3-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-metals}</span></span>
-<span id="cb3-443"><a href="#cb3-443" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-metals</span></span>
-<span id="cb3-444"><a href="#cb3-444" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 7. Multi-Metal Comparison: Fully Adjusted Associations with HbA1c&quot;</span></span>
-<span id="cb3-445"><a href="#cb3-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
-<span id="cb3-446"><a href="#cb3-446" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
-<span id="cb3-447"><a href="#cb3-447" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-448"><a href="#cb3-448" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig07_metals_forest.png&quot;</span>))</span>
-<span id="cb3-449"><a href="#cb3-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-450"><a href="#cb3-450" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-451"><a href="#cb3-451" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation</span></span>
-<span id="cb3-452"><a href="#cb3-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-453"><a href="#cb3-453" aria-hidden="true" tabindex="-1"></a>These findings contribute to the cross-sectional literature on environmental metal exposures and glycemic biomarkers in U.S. adults. In this sample, the unadjusted association between log blood lead and HbA1c was small and not statistically significant, while the fully adjusted association was inverse and statistically significant. **This pattern should not be read as evidence of a protective effect of lead.** It is more consistent with negative confounding by demographic and socioeconomic factors that are independently associated with both blood-lead burden and glycemic control, possibly compounded by selection processes, the timing window captured by blood-lead measurement (recent rather than cumulative exposure), and model specification under residual confounding.</span>
-<span id="cb3-454"><a href="#cb3-454" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-455"><a href="#cb3-455" aria-hidden="true" tabindex="-1"></a>Prior NHANES analyses have reported positive associations between metal exposures and dysglycemia under different exposure metrics, study periods, or modeling choices <span class="co">[</span><span class="ot">@Navas-Acien2016</span><span class="co">]</span>. The contrast with the present adjusted estimate underscores that observational associations between long-term metal burden and glycemia are sensitive to confounding structure and are not consistently reproducible across analytic decisions. Mechanistic claims (β-cell damage, oxidative stress) come from experimental and clinical literatures and cannot be evaluated with these data.</span>
-<span id="cb3-456"><a href="#cb3-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-457"><a href="#cb3-457" aria-hidden="true" tabindex="-1"></a>The lead × dietary-fiber interaction was examined to assess whether dietary quality modifies the lead–HbA1c association at the population level. Any modification observed should likewise be interpreted as a statistical interaction in an observational dataset, not a demonstration that fiber buffers the toxicokinetic effect of lead.</span>
-<span id="cb3-458"><a href="#cb3-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-459"><a href="#cb3-459" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitations</span></span>
-<span id="cb3-460"><a href="#cb3-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-461"><a href="#cb3-461" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Cross-sectional design — no causal inference:** NHANES is a single-time-point survey. Exposure and outcome are measured contemporaneously, so temporal ordering cannot be established and reverse causation cannot be excluded. All estimates in this report should be read as adjusted statistical associations, not effect sizes of a hypothetical intervention on lead.</span>
-<span id="cb3-462"><a href="#cb3-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-463"><a href="#cb3-463" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Residual and unmeasured confounding:** Despite adjustment for age, sex, race/ethnicity, education, poverty-income ratio, BMI, smoking, and dietary fiber, residual confounding from unmeasured factors — occupational exposures, residential proximity to pollution sources, co-exposure to other environmental contaminants, physical activity, dietary supplement use, and medication use beyond antihypertensives — is likely. Confounding is the most plausible explanation for the direction reversal between unadjusted and fully adjusted lead–HbA1c estimates.</span>
-<span id="cb3-464"><a href="#cb3-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-465"><a href="#cb3-465" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Dietary recall measurement error:** Dietary fiber and other nutrition variables are derived from a single Day-1 24-hour recall, which is subject to reporting error and may not reflect habitual intake. This non-differential measurement error generally biases interaction and adjustment effects toward the null.</span>
-<span id="cb3-466"><a href="#cb3-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-467"><a href="#cb3-467" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Blood metals reflect recent exposure, not lifetime burden:** Blood lead has a half-life of approximately 35 days and reflects recent exposure rather than cumulative bone burden; blood mercury similarly reflects recent dietary intake. Cadmium has a longer half-life and better reflects cumulative kidney burden, but is still imperfectly aligned with the long-term exposure window most relevant to chronic glycemic outcomes. NHANES does not measure bone lead.</span>
-<span id="cb3-468"><a href="#cb3-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-469"><a href="#cb3-469" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Single cycle:** This analysis uses only NHANES 2017–2018 (one 2-year cycle). Results may not generalize to more recent periods; pooling additional cycles in future work could improve precision and temporal scope.</span>
-<span id="cb3-470"><a href="#cb3-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-471"><a href="#cb3-471" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Missing data:** Complete-case analysis was used, which assumes missing at random and may introduce selection bias if missingness is informative.</span>
-<span id="cb3-472"><a href="#cb3-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-473"><a href="#cb3-473" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducibility Statement</span></span>
-<span id="cb3-474"><a href="#cb3-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-475"><a href="#cb3-475" aria-hidden="true" tabindex="-1"></a>This analysis is fully reproducible from publicly available data. All R code is in the <span class="in">`R/`</span> directory and can be executed in sequence (scripts 00–07) using the <span class="in">`here`</span> package for portable file paths. Raw NHANES <span class="in">`.XPT`</span> files are downloaded directly from the CDC public data repository via <span class="in">`curl`</span> and <span class="in">`haven::read_xpt()`</span>. The analytic dataset is saved as <span class="in">`data/processed/analysis_dataset_v2.rds`</span>. This report is rendered using Quarto from <span class="in">`report/nhanes_metal_nutrition_biomarkers.qmd`</span>. The full pipeline can be run end-to-end with <span class="in">`Rscript run_all.R`</span>.</span>
-<span id="cb3-476"><a href="#cb3-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-477"><a href="#cb3-477" aria-hidden="true" tabindex="-1"></a>**To reproduce:**</span>
-<span id="cb3-478"><a href="#cb3-478" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb3-479"><a href="#cb3-479" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/00_setup.R</span>
-<span id="cb3-480"><a href="#cb3-480" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/01_download_data.R</span>
-<span id="cb3-481"><a href="#cb3-481" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/02_clean_merge_data.R</span>
-<span id="cb3-482"><a href="#cb3-482" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/03_define_variables.R</span>
-<span id="cb3-483"><a href="#cb3-483" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/04_descriptive_analysis.R</span>
-<span id="cb3-484"><a href="#cb3-484" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/05_regression_models.R</span>
-<span id="cb3-485"><a href="#cb3-485" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/06_visualizations.R</span>
-<span id="cb3-486"><a href="#cb3-486" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/07_export_tables_figures.R</span>
-<span id="cb3-487"><a href="#cb3-487" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render report/nhanes_metal_nutrition_biomarkers.qmd</span>
-<span id="cb3-488"><a href="#cb3-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-489"><a href="#cb3-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-490"><a href="#cb3-490" aria-hidden="true" tabindex="-1"></a><span class="fu">## Future Extensions</span></span>
-<span id="cb3-491"><a href="#cb3-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-492"><a href="#cb3-492" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Mixture analysis (WQS, BKMR):** Model the joint effect of metal mixtures rather than individual exposures, accounting for correlations between co-occurring metals.</span>
-<span id="cb3-493"><a href="#cb3-493" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Mediation analysis:** Examine whether BMI mediates the metal-HbA1c pathway, using mediation packages such as <span class="in">`mediation`</span> or <span class="in">`CMAverse`</span>.</span>
-<span id="cb3-494"><a href="#cb3-494" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Subgroup analyses:** Stratify by race/ethnicity and sex to investigate health disparities in metal-metabolic associations.</span>
-<span id="cb3-495"><a href="#cb3-495" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Longitudinal validation:** Link NHANES findings to longitudinal cohort data (e.g., ARIC, Strong Heart Study) to test temporality.</span>
-<span id="cb3-496"><a href="#cb3-496" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Additional outcomes:** Extend to CRP (inflammatory biomarker), kidney function (eGFR, albuminuria), and lipid profiles.</span>
-<span id="cb3-497"><a href="#cb3-497" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Dietary pattern analysis:** Replace single nutrients with overall dietary patterns (e.g., Healthy Eating Index) as more comprehensive nutrition covariates.</span>
-<span id="cb3-498"><a href="#cb3-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-499"><a href="#cb3-499" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb3-500"><a href="#cb3-500" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-501"><a href="#cb3-501" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session Information {.appendix}</span></span>
-<span id="cb3-502"><a href="#cb3-502" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-503"><a href="#cb3-503" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session-info}</span></span>
-<span id="cb3-504"><a href="#cb3-504" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>()</span>
-<span id="cb3-505"><a href="#cb3-505" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Read NHANES XPT files (paired with curl for direct CDC download)&quot;</span>,</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Tidy model output&quot;</span>),</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>  <span class="at">Version =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;survey&quot;</span>, <span class="st">&quot;srvyr&quot;</span>, <span class="st">&quot;gtsummary&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;haven&quot;</span>, <span class="st">&quot;broom&quot;</span>),</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>                   <span class="cf">function</span>(p) <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(p)))</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(pkg_tbl) <span class="sc">|&gt;</span></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;condensed&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a><span class="fu">## Results</span></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sample Characteristics</span></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table1}</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table1</span></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 1. Characteristics of Analytic Sample (NHANES 2017–2018)&quot;</span></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate Table 1 in-document</span></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>table1_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;race_eth&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;pir_cat&quot;</span>, <span class="st">&quot;smoke_status&quot;</span>,</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;bmi&quot;</span>, <span class="st">&quot;blood_lead&quot;</span>, <span class="st">&quot;blood_cad&quot;</span>, <span class="st">&quot;blood_hg&quot;</span>,</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;hba1c&quot;</span>, <span class="st">&quot;hba1c_elevated&quot;</span>, <span class="st">&quot;fiber_g&quot;</span>, <span class="st">&quot;energy_kcal&quot;</span>)</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>table1_vars <span class="ot">&lt;-</span> <span class="fu">intersect</span>(table1_vars, <span class="fu">names</span>(dat))</span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(table1_vars)) <span class="sc">|&gt;</span></span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_summary</span>(</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">list</span>(</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_continuous</span>()  <span class="sc">~</span> <span class="st">&quot;{mean} ({sd})&quot;</span>,</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">&quot;{n} ({p}%)&quot;</span></span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits    =</span> <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing   =</span> <span class="st">&quot;ifany&quot;</span>,</span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_text =</span> <span class="st">&quot;Missing&quot;</span></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_n</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_header</span>(label <span class="sc">~</span> <span class="st">&quot;**Characteristic**&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold_labels</span>()</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table1-bylead}</span></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table1-bylead</span></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 1b. Sample Characteristics by Blood Lead Quartile&quot;</span></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(q_lead)) <span class="sc">|&gt;</span></span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(table1_vars[<span class="sc">!</span>table1_vars <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;blood_lead&quot;</span>,<span class="st">&quot;blood_cad&quot;</span>,<span class="st">&quot;blood_hg&quot;</span>)],</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;q_lead&quot;</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_summary</span>(</span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">by       =</span> q_lead,</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="fu">list</span>(</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_continuous</span>()  <span class="sc">~</span> <span class="st">&quot;{mean} ({sd})&quot;</span>,</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">&quot;{n} ({p}%)&quot;</span></span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits    =</span> <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing   =</span> <span class="st">&quot;no&quot;</span></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_overall</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_header</span>(label <span class="sc">~</span> <span class="st">&quot;**Characteristic**&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold_labels</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modify_spanning_header</span>(<span class="fu">starts_with</span>(<span class="st">&quot;stat_&quot;</span>) <span class="sc">~</span> <span class="st">&quot;**Blood Lead Quartile**&quot;</span>)</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### Missingness</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{r missingness}</span></span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-missingness</span></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Missingness Summary for Key Analysis Variables&quot;</span></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>miss_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blood_lead&quot;</span>, <span class="st">&quot;blood_cad&quot;</span>, <span class="st">&quot;blood_hg&quot;</span>, <span class="st">&quot;hba1c&quot;</span>,</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;crp&quot;</span>, <span class="st">&quot;total_chol&quot;</span>, <span class="st">&quot;hdl_chol&quot;</span>, <span class="st">&quot;sbp&quot;</span>, <span class="st">&quot;dbp&quot;</span>,</span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;bmi&quot;</span>, <span class="st">&quot;educ&quot;</span>, <span class="st">&quot;pir&quot;</span>, <span class="st">&quot;smoke_status&quot;</span>,</span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;fiber_g&quot;</span>, <span class="st">&quot;vitc_mg&quot;</span>, <span class="st">&quot;energy_kcal&quot;</span>)</span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>miss_vars <span class="ot">&lt;-</span> <span class="fu">intersect</span>(miss_vars, <span class="fu">names</span>(dat))</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable    =</span> miss_vars,</span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">N Missing</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x))),</span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">% Missing</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">round</span>(<span class="fu">mean</span>(<span class="fu">is.na</span>(x)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)),</span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">N Complete</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">nrow</span>(dat) <span class="sc">-</span> <span class="fu">sapply</span>(dat[miss_vars], <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">% Missing</span><span class="st">`</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">&quot;,&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;condensed&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exposure Distributions</span></span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-distributions}</span></span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-distributions</span></span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 1. Distribution of Blood Metal Concentrations (Raw and Log-Transformed)&quot;</span></span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 10</span></span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig01_exposure_distributions.png&quot;</span>))</span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-outcome}</span></span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-outcome</span></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 2. Distribution of Primary Outcome: HbA1c&quot;</span></span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 10</span></span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig02_outcome_distributions.png&quot;</span>))</span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exposure–Outcome Relationship</span></span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-scatter}</span></span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-scatter</span></span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 3. Scatter Plot: Log Blood Lead vs. HbA1c (LOESS and Linear Fit)&quot;</span></span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5.5</span></span>
+<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig03_exposure_outcome_scatter.png&quot;</span>))</span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regression Results</span></span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Linear Regression: Blood Lead → HbA1c</span></span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table2}</span></span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table2</span></span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 2. Association of Log Blood Lead with HbA1c (%) — Survey-Weighted Linear Regression&quot;</span></span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>linear_results <span class="sc">|&gt;</span></span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
+<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(std.error, <span class="dv">4</span>)</span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Model =</span> model, <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">paste0</span>(</span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;β = change in HbA1c (%) per 1-unit increase in ln(blood lead, µg/dL). &quot;</span>,</span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 1: Unadjusted. Model 2: + age, sex, race/ethnicity. &quot;</span>,</span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 3: + education, PIR, BMI, smoking, dietary fiber. &quot;</span>,</span>
+<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Model 4: Model 3 + lead×fiber interaction.&quot;</span></span>
+<span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-forest}</span></span>
+<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-forest</span></span>
+<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 4. Forest Plot: Association of Blood Lead with HbA1c Across Models&quot;</span></span>
+<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig04_forest_plot.png&quot;</span>))</span>
+<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-quartile}</span></span>
+<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-quartile</span></span>
+<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 5. Mean HbA1c by Blood Lead Quartile&quot;</span></span>
+<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig05_hba1c_by_lead_quartile.png&quot;</span>))</span>
+<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Logistic Regression: Blood Lead → Elevated HbA1c (≥5.7%)</span></span>
+<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table3}</span></span>
+<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table3</span></span>
+<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 3. Association of Log Blood Lead with Elevated HbA1c (≥5.7%) — Survey-Weighted Logistic Regression&quot;</span></span>
+<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>logit_results <span class="sc">|&gt;</span></span>
+<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">OR (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
+<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
+<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
+<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
+<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Model =</span> model, <span class="st">`</span><span class="at">OR (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">paste0</span>(</span>
+<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;OR = odds ratio per 1-unit increase in ln(blood lead, µg/dL). &quot;</span>,</span>
+<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Outcome: HbA1c ≥5.7% (prediabetes/diabetes threshold). &quot;</span>,</span>
+<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Models adjusted as in Table 2.&quot;</span></span>
+<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb3-396"><a href="#cb3-396" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-398"><a href="#cb3-398" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Interaction: Blood Lead × Dietary Fiber</span></span>
+<span id="cb3-399"><a href="#cb3-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-400"><a href="#cb3-400" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-interaction}</span></span>
+<span id="cb3-401"><a href="#cb3-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-interaction</span></span>
+<span id="cb3-402"><a href="#cb3-402" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 6. Interaction: Blood Lead × Dietary Fiber on HbA1c&quot;</span></span>
+<span id="cb3-403"><a href="#cb3-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb3-404"><a href="#cb3-404" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 5</span></span>
+<span id="cb3-405"><a href="#cb3-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-406"><a href="#cb3-406" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig06_interaction_plot.png&quot;</span>))</span>
+<span id="cb3-407"><a href="#cb3-407" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-408"><a href="#cb3-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-409"><a href="#cb3-409" aria-hidden="true" tabindex="-1"></a><span class="in">```{r interaction-pvalue}</span></span>
+<span id="cb3-410"><a href="#cb3-410" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb3-411"><a href="#cb3-411" aria-hidden="true" tabindex="-1"></a>int_model_row <span class="ot">&lt;-</span> linear_results <span class="sc">|&gt;</span></span>
+<span id="cb3-412"><a href="#cb3-412" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">&quot;log_lead:fiber_z&quot;</span>)</span>
+<span id="cb3-413"><a href="#cb3-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-414"><a href="#cb3-414" aria-hidden="true" tabindex="-1"></a>int_est <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(int_model_row) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">round</span>(int_model_row<span class="sc">$</span>estimate[<span class="dv">1</span>], <span class="dv">4</span>) <span class="cf">else</span> <span class="cn">NA</span></span>
+<span id="cb3-415"><a href="#cb3-415" aria-hidden="true" tabindex="-1"></a>int_p   <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(int_model_row) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-416"><a href="#cb3-416" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (int_model_row<span class="sc">$</span>p.value[<span class="dv">1</span>] <span class="sc">&lt;</span> <span class="fl">0.001</span>) <span class="st">&quot;&lt;0.001&quot;</span> <span class="cf">else</span> <span class="fu">as.character</span>(<span class="fu">round</span>(int_model_row<span class="sc">$</span>p.value[<span class="dv">1</span>], <span class="dv">3</span>))</span>
+<span id="cb3-417"><a href="#cb3-417" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="st">&quot;not estimable&quot;</span></span>
+<span id="cb3-418"><a href="#cb3-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-419"><a href="#cb3-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-420"><a href="#cb3-420" aria-hidden="true" tabindex="-1"></a>The interaction term (log blood lead × dietary fiber z-score) had a coefficient of β = <span class="in">`r int_est`</span> (p = <span class="in">`r int_p`</span>), suggesting <span class="in">`r ifelse(is.na(int_est), &quot;the interaction could not be estimated in the available data.&quot;, if(!is.na(int_est) &amp; !is.na(suppressWarnings(as.numeric(int_p)))) { if(as.numeric(int_p) &lt; 0.05) &quot;a statistically significant modification of the lead-HbA1c association by dietary fiber intake.&quot; else &quot;no statistically significant modification of the lead-HbA1c association by dietary fiber intake.&quot; } else &quot;marginal evidence of effect modification by dietary fiber intake.&quot;)`</span>.</span>
+<span id="cb3-421"><a href="#cb3-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-422"><a href="#cb3-422" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sensitivity Analyses: All Metals</span></span>
+<span id="cb3-423"><a href="#cb3-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-424"><a href="#cb3-424" aria-hidden="true" tabindex="-1"></a><span class="in">```{r table4}</span></span>
+<span id="cb3-425"><a href="#cb3-425" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-table4</span></span>
+<span id="cb3-426"><a href="#cb3-426" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Table 4. Sensitivity Analysis: Association of All Blood Metals with HbA1c (Fully Adjusted)&quot;</span></span>
+<span id="cb3-427"><a href="#cb3-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-428"><a href="#cb3-428" aria-hidden="true" tabindex="-1"></a>sens_results <span class="sc">|&gt;</span></span>
+<span id="cb3-429"><a href="#cb3-429" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-430"><a href="#cb3-430" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">&quot;{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})&quot;</span>),</span>
+<span id="cb3-431"><a href="#cb3-431" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">p-value</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-432"><a href="#cb3-432" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.001</span> <span class="sc">~</span> <span class="st">&quot;&lt;0.001&quot;</span>,</span>
+<span id="cb3-433"><a href="#cb3-433" aria-hidden="true" tabindex="-1"></a>      p.value <span class="sc">&lt;</span> <span class="fl">0.01</span>  <span class="sc">~</span> <span class="st">&quot;&lt;0.01&quot;</span>,</span>
+<span id="cb3-434"><a href="#cb3-434" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">round</span>(p.value, <span class="dv">3</span>))</span>
+<span id="cb3-435"><a href="#cb3-435" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-436"><a href="#cb3-436" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-437"><a href="#cb3-437" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Exposure =</span> exposure, <span class="st">`</span><span class="at">β (95% CI)</span><span class="st">`</span>, <span class="st">`</span><span class="at">p-value</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-438"><a href="#cb3-438" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-439"><a href="#cb3-439" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;striped&quot;</span>, <span class="st">&quot;hover&quot;</span>), <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-440"><a href="#cb3-440" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="st">&quot;All models adjusted for age, sex, race/ethnicity, education, PIR, BMI, smoking, dietary fiber. Survey-weighted.&quot;</span>)</span>
+<span id="cb3-441"><a href="#cb3-441" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-442"><a href="#cb3-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-443"><a href="#cb3-443" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-metals}</span></span>
+<span id="cb3-444"><a href="#cb3-444" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-metals</span></span>
+<span id="cb3-445"><a href="#cb3-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Figure 7. Multi-Metal Comparison: Fully Adjusted Associations with HbA1c&quot;</span></span>
+<span id="cb3-446"><a href="#cb3-446" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb3-447"><a href="#cb3-447" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
+<span id="cb3-448"><a href="#cb3-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-449"><a href="#cb3-449" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">here</span>(<span class="st">&quot;outputs&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;fig07_metals_forest.png&quot;</span>))</span>
+<span id="cb3-450"><a href="#cb3-450" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-451"><a href="#cb3-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-452"><a href="#cb3-452" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation</span></span>
+<span id="cb3-453"><a href="#cb3-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-454"><a href="#cb3-454" aria-hidden="true" tabindex="-1"></a>These findings contribute to the cross-sectional literature on environmental metal exposures and glycemic biomarkers in U.S. adults. In this sample, the unadjusted association between log blood lead and HbA1c was small and not statistically significant, while the fully adjusted association was inverse and statistically significant. **This pattern should not be read as evidence of a protective effect of lead.** It is more consistent with negative confounding by demographic and socioeconomic factors that are independently associated with both blood-lead burden and glycemic control, possibly compounded by selection processes, the timing window captured by blood-lead measurement (recent rather than cumulative exposure), and model specification under residual confounding.</span>
+<span id="cb3-455"><a href="#cb3-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-456"><a href="#cb3-456" aria-hidden="true" tabindex="-1"></a>Prior NHANES analyses have reported positive associations between metal exposures and dysglycemia under different exposure metrics, study periods, or modeling choices <span class="co">[</span><span class="ot">@Navas-Acien2016</span><span class="co">]</span>. The contrast with the present adjusted estimate underscores that observational associations between long-term metal burden and glycemia are sensitive to confounding structure and are not consistently reproducible across analytic decisions. Mechanistic claims (β-cell damage, oxidative stress) come from experimental and clinical literatures and cannot be evaluated with these data.</span>
+<span id="cb3-457"><a href="#cb3-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-458"><a href="#cb3-458" aria-hidden="true" tabindex="-1"></a>The lead × dietary-fiber interaction was examined to assess whether dietary quality modifies the lead–HbA1c association at the population level. Any modification observed should likewise be interpreted as a statistical interaction in an observational dataset, not a demonstration that fiber buffers the toxicokinetic effect of lead.</span>
+<span id="cb3-459"><a href="#cb3-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-460"><a href="#cb3-460" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitations</span></span>
+<span id="cb3-461"><a href="#cb3-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-462"><a href="#cb3-462" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Cross-sectional design — no causal inference:** NHANES is a single-time-point survey. Exposure and outcome are measured contemporaneously, so temporal ordering cannot be established and reverse causation cannot be excluded. All estimates in this report should be read as adjusted statistical associations, not effect sizes of a hypothetical intervention on lead.</span>
+<span id="cb3-463"><a href="#cb3-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-464"><a href="#cb3-464" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Residual and unmeasured confounding:** Despite adjustment for age, sex, race/ethnicity, education, poverty-income ratio, BMI, smoking, and dietary fiber, residual confounding from unmeasured factors — occupational exposures, residential proximity to pollution sources, co-exposure to other environmental contaminants, physical activity, dietary supplement use, and medication use beyond antihypertensives — is likely. Confounding is the most plausible explanation for the direction reversal between unadjusted and fully adjusted lead–HbA1c estimates.</span>
+<span id="cb3-465"><a href="#cb3-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-466"><a href="#cb3-466" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Dietary recall measurement error:** Dietary fiber and other nutrition variables are derived from a single Day-1 24-hour recall, which is subject to reporting error and may not reflect habitual intake. This non-differential measurement error generally biases interaction and adjustment effects toward the null.</span>
+<span id="cb3-467"><a href="#cb3-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-468"><a href="#cb3-468" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Blood metals reflect recent exposure, not lifetime burden:** Blood lead has a half-life of approximately 35 days and reflects recent exposure rather than cumulative bone burden; blood mercury similarly reflects recent dietary intake. Cadmium has a longer half-life and better reflects cumulative kidney burden, but is still imperfectly aligned with the long-term exposure window most relevant to chronic glycemic outcomes. NHANES does not measure bone lead.</span>
+<span id="cb3-469"><a href="#cb3-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-470"><a href="#cb3-470" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Single cycle:** This analysis uses only NHANES 2017–2018 (one 2-year cycle). Results may not generalize to more recent periods; pooling additional cycles in future work could improve precision and temporal scope.</span>
+<span id="cb3-471"><a href="#cb3-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-472"><a href="#cb3-472" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Missing data:** Complete-case analysis was used, which assumes missing at random and may introduce selection bias if missingness is informative.</span>
+<span id="cb3-473"><a href="#cb3-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-474"><a href="#cb3-474" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducibility Statement</span></span>
+<span id="cb3-475"><a href="#cb3-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-476"><a href="#cb3-476" aria-hidden="true" tabindex="-1"></a>This analysis is fully reproducible from publicly available data. All R code is in the <span class="in">`R/`</span> directory and can be executed in sequence (scripts 00–07) using the <span class="in">`here`</span> package for portable file paths. Raw NHANES <span class="in">`.XPT`</span> files are downloaded directly from the CDC public data repository via <span class="in">`curl`</span> and <span class="in">`haven::read_xpt()`</span>. The analytic dataset is saved as <span class="in">`data/processed/analysis_dataset_v2.rds`</span>. This report is rendered using Quarto from <span class="in">`report/nhanes_metal_nutrition_biomarkers.qmd`</span>. The full pipeline can be run end-to-end with <span class="in">`Rscript run_all.R`</span>.</span>
+<span id="cb3-477"><a href="#cb3-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-478"><a href="#cb3-478" aria-hidden="true" tabindex="-1"></a>**To reproduce:**</span>
+<span id="cb3-479"><a href="#cb3-479" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb3-480"><a href="#cb3-480" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/00_setup.R</span>
+<span id="cb3-481"><a href="#cb3-481" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/01_download_data.R</span>
+<span id="cb3-482"><a href="#cb3-482" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/02_clean_merge_data.R</span>
+<span id="cb3-483"><a href="#cb3-483" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/03_define_variables.R</span>
+<span id="cb3-484"><a href="#cb3-484" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/04_descriptive_analysis.R</span>
+<span id="cb3-485"><a href="#cb3-485" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/05_regression_models.R</span>
+<span id="cb3-486"><a href="#cb3-486" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/06_visualizations.R</span>
+<span id="cb3-487"><a href="#cb3-487" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> R/07_export_tables_figures.R</span>
+<span id="cb3-488"><a href="#cb3-488" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render report/nhanes_metal_nutrition_biomarkers.qmd</span>
+<span id="cb3-489"><a href="#cb3-489" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-490"><a href="#cb3-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-491"><a href="#cb3-491" aria-hidden="true" tabindex="-1"></a><span class="fu">## Future Extensions</span></span>
+<span id="cb3-492"><a href="#cb3-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-493"><a href="#cb3-493" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Mixture analysis (WQS, BKMR):** Model the joint effect of metal mixtures rather than individual exposures, accounting for correlations between co-occurring metals.</span>
+<span id="cb3-494"><a href="#cb3-494" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Mediation analysis:** Examine whether BMI mediates the metal-HbA1c pathway, using mediation packages such as <span class="in">`mediation`</span> or <span class="in">`CMAverse`</span>.</span>
+<span id="cb3-495"><a href="#cb3-495" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Subgroup analyses:** Stratify by race/ethnicity and sex to investigate health disparities in metal-metabolic associations.</span>
+<span id="cb3-496"><a href="#cb3-496" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Longitudinal validation:** Link NHANES findings to longitudinal cohort data (e.g., ARIC, Strong Heart Study) to test temporality.</span>
+<span id="cb3-497"><a href="#cb3-497" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Additional outcomes:** Extend to CRP (inflammatory biomarker), kidney function (eGFR, albuminuria), and lipid profiles.</span>
+<span id="cb3-498"><a href="#cb3-498" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Dietary pattern analysis:** Replace single nutrients with overall dietary patterns (e.g., Healthy Eating Index) as more comprehensive nutrition covariates.</span>
+<span id="cb3-499"><a href="#cb3-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-500"><a href="#cb3-500" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-501"><a href="#cb3-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-502"><a href="#cb3-502" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session Information {.appendix}</span></span>
+<span id="cb3-503"><a href="#cb3-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-504"><a href="#cb3-504" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session-info}</span></span>
+<span id="cb3-505"><a href="#cb3-505" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>()</span>
+<span id="cb3-506"><a href="#cb3-506" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -8,8 +8,8 @@
 # --- CRAN packages -----------------------------------------------------------
 cran_pkgs <- c(
   # Data acquisition
-  "nhanesA",      # NHANES data download
-  "haven",        # Read SAS/SPSS/Stata files
+  "haven",        # Read SAS XPT files (NHANES native format); see R/01_download_data.R
+  "curl",         # Robust HTTP downloads with timeout/retry (preferred over base download.file)
 
   # Data wrangling
   "tidyverse",    # dplyr, tidyr, readr, ggplot2, purrr, stringr

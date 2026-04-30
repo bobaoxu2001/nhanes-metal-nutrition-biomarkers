@@ -109,7 +109,7 @@ HbA1c (glycated hemoglobin) is an established biomarker of average glycemia over
 
 ## Research Question
 
-> *Are blood or urinary metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?*
+> *Are blood metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?*
 
 ## Data Source
 
@@ -200,11 +200,12 @@ All analyses were conducted in **R** (version ≥4.3) using the `survey` package
 #| tbl-cap: "Key R Packages"
 
 pkg_tbl <- tibble(
-  Package = c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "nhanesA", "broom"),
+  Package = c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "haven", "broom"),
   Purpose = c("Survey-weighted regression", "Tidyverse-style survey wrappers",
               "Publication tables", "Data visualization", "Data wrangling",
-              "NHANES data download", "Tidy model output"),
-  Version = sapply(c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "nhanesA", "broom"),
+              "Read NHANES XPT files (paired with curl for direct CDC download)",
+              "Tidy model output"),
+  Version = sapply(c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "haven", "broom"),
                    function(p) as.character(packageVersion(p)))
 )
 

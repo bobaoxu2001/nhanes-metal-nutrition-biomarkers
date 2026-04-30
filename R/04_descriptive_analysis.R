@@ -32,8 +32,7 @@ message(glue("  Loaded: {nrow(dat)} participants"))
 # =============================================================================
 # 1. Define survey design object
 # =============================================================================
-# Combine 2017-2018 and 2019-March 2020 using NHANES combined weight
-# wt_combined = original_weight / 2 (applied in 02_clean_merge_data.R)
+# Single-cycle 2017-2018 design: WTMEC2YR used directly (no pooling adjustment).
 svy_design <- svydesign(
   ids     = ~psu,
   strata  = ~strata,

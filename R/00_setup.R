@@ -12,7 +12,6 @@ suppressPackageStartupMessages({
   library(here)
   library(janitor)
   library(haven)
-  library(nhanesA)
   library(survey)
   library(srvyr)
   library(broom)
@@ -56,9 +55,8 @@ walk(c(dir_raw, dir_processed, dir_codebook, dir_tables, dir_figures, dir_report
      dir_create)
 
 # --- NHANES cycle ------------------------------------------------------------
-# 2017-2018 (cycle J) only.
-# The 2019-March 2020 pre-pandemic files (_P) are not hosted at the standard
-# CDC URL pattern and cannot be downloaded programmatically. See methods_notes.md.
+# This analysis uses NHANES 2017-2018 (cycle J) only. See docs/methods_notes.md
+# for the rationale (single-cycle pre-pandemic data; avoids COVID-era effects).
 
 # NHANES file names by domain (single cycle)
 nhanes_files <- list(
@@ -82,8 +80,7 @@ var_map <- list(
   seqn    = "SEQN",
   psu     = "SDMVPSU",
   strata  = "SDMVSTRA",
-  wt_mec  = "WTMEC2YR",    # 2017-2018 MEC weight
-  wt_pre  = "WTMECPRP",    # 2019-March 2020 pre-pandemic MEC weight
+  wt_mec  = "WTMEC2YR",    # 2017-2018 MEC examination weight (used directly; single cycle)
 
   # Demographics
   age     = "RIDAGEYR",
@@ -98,20 +95,17 @@ var_map <- list(
   hg      = "LBXTHG",      # Blood Total Mercury (µg/L)
 
   # Outcomes
-  hba1c   = "LBXGH",       # HbA1c %  (GHB files)
-  crp     = "LBXCRP",      # C-Reactive Protein mg/dL (CRP files)
-  tchol   = "LBXTC",       # Total Cholesterol mg/dL (TCHOL files)
-  hdl     = "LBDHDD",      # HDL Cholesterol mg/dL (HDL files)
+  hba1c   = "LBXGH",       # HbA1c %  (GHB_J)
+  hscrp   = "LBXHSCRP",    # High-Sensitivity CRP mg/L (HSCRP_J); converted to mg/dL in 02_
+  tchol   = "LBXTC",       # Total Cholesterol mg/dL (TCHOL_J)
+  hdl     = "LBDHDD",      # HDL Cholesterol mg/dL (HDL_J)
 
   # Body measures
   bmi     = "BMXBMI",
 
-  # Blood pressure (BPX files)
+  # Blood pressure (BPX_J — auscultatory readings, 2017-2018)
   sbp1    = "BPXSY1",  sbp2 = "BPXSY2",  sbp3 = "BPXSY3",
   dbp1    = "BPXDI1",  dbp2 = "BPXDI2",  dbp3 = "BPXDI3",
-  # 2019-March 2020 oscillometric BP (BPXO files)
-  sbp1p   = "BPXOSY1", sbp2p = "BPXOSY2", sbp3p = "BPXOSY3",
-  dbp1p   = "BPXODI1", dbp2p = "BPXODI2", dbp3p = "BPXODI3",
 
   # BP medication (BPQ files)
   bp_med  = "BPQ050A",

@@ -5,19 +5,18 @@
 #          Save as .rds files in data/raw/.
 #
 # NOTE ON CYCLE SELECTION:
-#   We use NHANES 2017-2018 (cycle J) only.
-#   The 2019-March 2020 pre-pandemic files (_P suffix) are not hosted at the
-#   standard CDC data URL pattern. This is documented in docs/methods_notes.md.
-#   A single-cycle analysis with WTMEC2YR weights is standard and valid.
+#   We use NHANES 2017-2018 (cycle J) only — a single-cycle design with
+#   WTMEC2YR weights, the standard NCHS-recommended approach.
 #
 # NOTE ON DOWNLOAD METHOD:
-#   nhanesA 0.7.2 constructs malformed URLs for cycle-J files (known bug).
-#   We bypass it and download directly from the CDC via haven::read_xpt().
-#   Correct base: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/
+#   We download .XPT files directly from the CDC public data repository
+#   (https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/) using
+#   curl with timeout/retry, fall back to download.file() if needed,
+#   then read via haven::read_xpt() and cache as .rds in data/raw/.
 #
 # NOTE ON CRP:
-#   The 2017-2018 CRP file is "High-Sensitivity CRP" = HSCRP_J (not CRP_J).
-#   CRP_J does not exist for this cycle. Variable: LBXHSCRP (mg/L).
+#   For 2017-2018 the standard CRP file is HSCRP_J (high-sensitivity CRP);
+#   variable LBXHSCRP in mg/L. We convert to mg/dL (× 0.1) in 02_clean_merge.
 # =============================================================================
 
 source(here::here("R", "00_setup.R"))
