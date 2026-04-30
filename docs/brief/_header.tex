@@ -1,0 +1,44 @@
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{tcolorbox}
+\usepackage{parskip}
+\usepackage{hyperref}
+\definecolor{navy}{HTML}{1A2A4F}
+\definecolor{rulegray}{HTML}{C8C8C8}
+\definecolor{boxbg}{HTML}{F4F5F7}
+\definecolor{boxborder}{HTML}{D7DAE0}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy,citecolor=navy}
+\tcbset{
+  callout/.style={
+    colback=boxbg,
+    colframe=boxborder,
+    boxrule=0.4pt,
+    arc=1pt,
+    left=4pt,right=4pt,top=3pt,bottom=3pt,
+    fonttitle=\bfseries\color{navy}\small,
+    title=#1
+  }
+}
+\newcommand{\sectionrule}{\vspace{1pt}{\color{rulegray}\hrule height 0.5pt}}
+\titleformat{\section}{\small\bfseries\color{navy}}{}{0pt}{\MakeUppercase}[\sectionrule]
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlength{\columnsep}{16pt}
+\captionsetup{font=small,labelfont={bf,color=navy},labelsep=period,textfont=it}
+\pagenumbering{gobble}
+\setlist[itemize]{leftmargin=*,itemsep=0pt,topsep=1pt,parsep=0pt}
+
+% --- Title block as a single command so pandoc passes it through cleanly ---
+\newcommand{\BriefTitleBlock}{%
+\begin{center}
+{\LARGE\bfseries\color{navy} Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers}\par
+\vspace{2pt}
+{\small\itshape A reproducible NHANES 2017--2018 analysis using R, survey-weighted regression, and Quarto}\par
+\vspace{3pt}
+{\footnotesize Allen Xu \quad\textbar\quad New York University \quad\textbar\quad \href{mailto:ax2183@nyu.edu}{ax2183@nyu.edu} \quad\textbar\quad \href{https://github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers}{github.com/bobaoxu2001/nhanes-metal-nutrition-biomarkers}}
+\end{center}
+\vspace{-4pt}\noindent{\color{rulegray}\rule{\linewidth}{0.6pt}}\vspace{2pt}\par
+}
