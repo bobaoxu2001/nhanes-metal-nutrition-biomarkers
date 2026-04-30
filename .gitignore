@@ -1,0 +1,42 @@
+# =============================================================================
+# .gitignore — NHANES Metal Nutrition Biomarkers Project
+# =============================================================================
+
+# --- R session artifacts -----------------------------------------------------
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj.user
+
+# --- macOS system files ------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Raw NHANES data (large binary XPT files; download via 01_download_data.R)
+data/raw/
+
+# --- Processed datasets (reproducible from raw data + scripts) ---------------
+data/processed/*.rds
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.RDS
+
+# --- Large data / archive file types -----------------------------------------
+*.xpt
+*.zip
+*.gz
+
+# --- Quarto render cache and intermediate files ------------------------------
+_freeze/
+*_cache/
+.quarto/
+
+# --- Log files ---------------------------------------------------------------
+*.log
+
+# --- Environment / secrets ---------------------------------------------------
+.env
+renv/
+
+# --- Allow codebook markdown files ------------------------------------------
+!data/codebook/*.md

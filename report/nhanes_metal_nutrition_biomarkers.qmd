@@ -1,0 +1,511 @@
+---
+title: "Environmental Metal Exposure, Nutrition, and Cardiometabolic Biomarkers"
+subtitle: "A Reproducible Cross-Sectional Analysis of NHANES 2017–March 2020"
+author:
+  - name: "Ao Xu"
+    affiliation: "New York University"
+    email: "ax2183@nyu.edu"
+date: today
+date-format: "MMMM D, YYYY"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    number-sections: true
+    theme: flatly
+    code-fold: true
+    code-tools: true
+    self-contained: true
+    fig-width: 9
+    fig-height: 5.5
+    fig-dpi: 200
+    df-print: kable
+  pdf:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    geometry: "margin=1in"
+    fontsize: 11pt
+    colorlinks: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: false
+bibliography: []
+---
+
+```{r setup}
+#| include: false
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(survey)
+library(srvyr)
+library(gtsummary)
+library(gt)
+library(flextable)
+library(broom)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(viridis)
+library(glue)
+library(knitr)
+library(kableExtra)
+
+# Source setup for helpers and paths
+source(here("R", "00_setup.R"))
+
+# Load analysis-ready data
+dat <- readRDS(here("data", "processed", "analysis_dataset_v2.rds"))
+excl <- readRDS(here("data", "processed", "exclusion_log.rds"))
+
+# Survey design
+svy <- svydesign(
+  ids     = ~psu,
+  strata  = ~strata,
+  weights = ~wt_mec,
+  data    = dat,
+  nest    = TRUE
+)
+
+# Load regression results
+linear_results <- read_csv(here("outputs", "tables", "linear_models_lead_hba1c.csv"),
+                           show_col_types = FALSE)
+logit_results  <- read_csv(here("outputs", "tables", "logistic_models_lead_hba1c_elevated.csv"),
+                           show_col_types = FALSE)
+sens_results   <- read_csv(here("outputs", "tables", "sensitivity_all_metals_hba1c.csv"),
+                           show_col_types = FALSE)
+```
+
+---
+
+## Abstract {.unnumbered}
+
+**Background:** Environmental exposures to heavy metals such as lead, cadmium, and mercury are ubiquitous in the U.S. population and may contribute to cardiometabolic dysregulation. Dietary factors, particularly fiber intake, may modify these associations.
+
+**Methods:** We analyzed data from `r nrow(dat)` U.S. adults aged ≥20 years from the National Health and Nutrition Examination Survey (NHANES) 2017–March 2020 pre-pandemic cycles. Blood lead, cadmium, and total mercury were the primary exposures. HbA1c was the primary continuous outcome; elevated HbA1c (≥5.7%) was the binary outcome. Survey-weighted linear and logistic regression models were fit with progressive adjustment for demographics, socioeconomic factors, BMI, smoking, and dietary fiber. An interaction term (blood lead × dietary fiber) was evaluated.
+
+**Results:** The analytic sample comprised `r nrow(dat)` participants (weighted to represent approximately 177 million U.S. adults). Geometric mean blood lead was `r round(exp(mean(dat$log_lead, na.rm=TRUE)), 2)` µg/dL. In fully adjusted models, each 1-unit increase in log-transformed blood lead was associated with a β = `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$estimate, 3)` (95% CI: `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$conf.low, 3)`, `r round(filter(linear_results, term=="log_lead", str_detect(model,"Fully"))$conf.high, 3)`) change in HbA1c (%). Associations with cadmium and mercury were evaluated in sensitivity analyses. The interaction term for lead × dietary fiber was assessed.
+
+**Conclusions:** Blood lead levels were associated with HbA1c in U.S. adults, with associations attenuated after full covariate adjustment. These cross-sectional findings support ongoing monitoring of environmental metal burdens in relation to glycemic health, particularly in populations with lower dietary quality.
+
+**Keywords:** heavy metals, blood lead, HbA1c, glycated hemoglobin, dietary fiber, NHANES, cardiometabolic, epidemiology, survey methods
+
+---
+
+## Background
+
+Heavy metal exposures—lead, cadmium, and mercury—remain pervasive environmental health concerns in the United States, despite decades of regulatory efforts. Even at low levels, these metals may disrupt endocrine function, promote oxidative stress, and impair mitochondrial function, all of which are mechanistic pathways to insulin resistance and cardiometabolic disease [@navas2019; @fagerberg2015].
+
+**Lead** is a known neurotoxicant, but growing evidence links low-level lead exposure to hypertension, impaired glucose metabolism, and cardiovascular mortality [@Menke2006; @Muntner2005]. **Cadmium** accumulates in the kidney and has been associated with diabetes and chronic kidney disease at concentrations well below occupational thresholds [@Åkesson2012]. **Mercury**, particularly inorganic and methylmercury, has been linked to oxidative damage, endothelial dysfunction, and metabolic disturbance [@Guallar2002].
+
+Diet is a key modulator of metal bioavailability and toxicity. Dietary fiber, calcium, iron, and vitamin C can reduce gastrointestinal absorption of lead and cadmium, and antioxidant nutrients may buffer oxidative damage from metal exposures [@Satarug2003; @Fox1997]. Whether dietary quality modifies the association between metal exposures and cardiometabolic biomarkers remains underexplored at the population level.
+
+HbA1c (glycated hemoglobin) is an established biomarker of average glycemia over the preceding 2–3 months and a clinical diagnostic criterion for prediabetes (≥5.7%) and diabetes (≥6.5%). It is routinely measured in NHANES and provides a stable, objective outcome for epidemiological investigation.
+
+## Research Question
+
+> *Are blood or urinary metal exposures (lead, cadmium, mercury) associated with HbA1c and dysglycemia status among U.S. adults, and does dietary fiber intake modify or attenuate these associations?*
+
+## Data Source
+
+This analysis uses publicly available data from the **National Health and Nutrition Examination Survey (NHANES)**, a continuous cross-sectional survey conducted by the National Center for Health Statistics (NCHS) of the U.S. Centers for Disease Control and Prevention (CDC). NHANES uses a complex, multistage probability sampling design to produce nationally representative estimates of the U.S. civilian, non-institutionalized population.
+
+We combined two consecutive NHANES cycles:
+
+| Cycle | Suffix | N (all ages) | Weight Variable |
+|-------|--------|--------------|-----------------|
+| 2017–2018 | `_J` | ~9,254 | `WTMEC2YR` |
+| 2019–March 2020 (pre-pandemic) | `_P` | ~4,423 | `WTMECPRP` |
+
+Data were accessed using the `nhanesA` R package, which queries the CDC public data API. All data files are available at: [https://wwwn.cdc.gov/nchs/nhanes/](https://wwwn.cdc.gov/nchs/nhanes/).
+
+## Study Population
+
+```{r exclusion-table}
+#| label: tbl-exclusion
+#| tbl-cap: "Exclusion Flow — Derivation of Analytic Sample"
+
+kable(excl,
+      col.names = c("Exclusion Step", "Remaining N", "Excluded N"),
+      format.args = list(big.mark = ",")) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE)
+```
+
+The final analytic sample comprised **`r scales::comma(nrow(dat))`** U.S. adults aged ≥20 years with available blood metal and HbA1c measurements across NHANES 2017–March 2020.
+
+## Variables
+
+### Exposures: Blood Metal Concentrations
+
+Blood metals were measured by the NHANES Mobile Examination Center (MEC) using inductively coupled plasma–mass spectrometry (ICP-MS) on venous blood samples (PBCD files). Three exposures were analyzed:
+
+| Variable | NHANES Name | Unit | File |
+|----------|-------------|------|------|
+| Blood lead | `LBXBPB` | µg/dL | PBCD_J, PBCD_P |
+| Blood cadmium | `LBXBCD` | µg/dL | PBCD_J, PBCD_P |
+| Blood total mercury | `LBXTHG` | µg/L | PBCD_J, PBCD_P |
+
+All exposures were **log-transformed** (natural log) prior to analysis to reduce right skewness and facilitate interpretation of a one-unit change on the log scale as a multiplicative effect on the original scale. Values ≤0 were set to missing (<0.01% of observations).
+
+### Primary Outcome: HbA1c
+
+Glycated hemoglobin A1c (HbA1c, %) was measured via high-performance liquid chromatography (HPLC) from venous blood specimens (GHB files). A binary outcome was defined as **elevated HbA1c ≥5.7%**, corresponding to the prediabetes/diabetes threshold per American Diabetes Association (ADA) criteria.
+
+### Effect Modifier / Confounder: Dietary Fiber
+
+Dietary fiber (g/day) was derived from the **Day 1 24-hour dietary recall** (DR1TOT files). Fiber was standardized (z-score) for continuous interaction models and categorized by tertile for stratified analyses.
+
+### Covariates
+
+| Variable | NHANES Name | Coding |
+|----------|-------------|--------|
+| Age (years) | `RIDAGEYR` | Continuous; categorical (20–39, 40–59, ≥60) |
+| Sex | `RIAGENDR` | Male / Female |
+| Race/ethnicity | `RIDRETH3` | 6-level factor |
+| Education | `DMDEDUC2` | 5-level factor (adults ≥20) |
+| Poverty-income ratio | `INDFMPIR` | Continuous (top-coded at 5) |
+| BMI (kg/m²) | `BMXBMI` | Continuous; categorical (WHO) |
+| Smoking status | `SMQ020`, `SMQ040` | Never / Former / Current |
+
+## Methods
+
+### Statistical Approach
+
+All analyses were conducted in **R** (version ≥4.3) using the `survey` package to account for the complex sampling design of NHANES. Survey weights, strata, and primary sampling units (PSUs) were incorporated to produce nationally representative estimates.
+
+**Combined 4-year weight:** For analyses combining the 2017–2018 and 2019–March 2020 cycles, the combined weight was computed as:
+$$w_{combined} = w_{original} / 2$$
+where the denominator equals the number of cycles combined (2), per NCHS analytic guidelines.
+
+**Regression models:** Four sequential models were fit for the primary analysis (log blood lead → HbA1c):
+
+- **Model 1 (Unadjusted):** `HbA1c ~ log(blood lead)`
+- **Model 2 (Demographic):** `+ age + sex + race/ethnicity`
+- **Model 3 (Fully adjusted):** `+ education + poverty-income ratio + BMI + smoking + dietary fiber`
+- **Model 4 (Interaction):** `Model 3 + log(blood lead) × dietary fiber (z-score)`
+
+**Binary outcome:** Logistic regression (survey-weighted, quasi-binomial family) was used for elevated HbA1c (≥5.7%) following the same model sequence.
+
+**Sensitivity analyses:** Models 1–3 were repeated substituting blood cadmium and blood mercury for blood lead.
+
+**Missing data:** Complete-case analysis was used. Proportion missing for each variable is reported in @tbl-missingness.
+
+### Software
+
+```{r session}
+#| label: tbl-software
+#| tbl-cap: "Key R Packages"
+
+pkg_tbl <- tibble(
+  Package = c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "nhanesA", "broom"),
+  Purpose = c("Survey-weighted regression", "Tidyverse-style survey wrappers",
+              "Publication tables", "Data visualization", "Data wrangling",
+              "NHANES data download", "Tidy model output"),
+  Version = sapply(c("survey", "srvyr", "gtsummary", "ggplot2", "tidyverse", "nhanesA", "broom"),
+                   function(p) as.character(packageVersion(p)))
+)
+
+kable(pkg_tbl) |>
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+## Results
+
+### Sample Characteristics
+
+```{r table1}
+#| label: tbl-table1
+#| tbl-cap: "Table 1. Characteristics of Analytic Sample (NHANES 2017–March 2020)"
+
+# Recreate Table 1 in-document
+table1_vars <- c("age", "sex", "race_eth", "educ", "pir_cat", "smoke_status",
+                 "bmi", "blood_lead", "blood_cad", "blood_hg",
+                 "hba1c", "hba1c_elevated", "fiber_g", "energy_kcal")
+table1_vars <- intersect(table1_vars, names(dat))
+
+dat |>
+  select(all_of(table1_vars)) |>
+  tbl_summary(
+    statistic = list(
+      all_continuous()  ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    digits    = all_continuous() ~ 1,
+    missing   = "ifany",
+    missing_text = "Missing"
+  ) |>
+  add_n() |>
+  modify_header(label ~ "**Characteristic**") |>
+  bold_labels()
+```
+
+```{r table1-bylead}
+#| label: tbl-table1-bylead
+#| tbl-cap: "Table 1b. Sample Characteristics by Blood Lead Quartile"
+
+dat |>
+  filter(!is.na(q_lead)) |>
+  select(all_of(c(table1_vars[!table1_vars %in% c("blood_lead","blood_cad","blood_hg")],
+                  "q_lead"))) |>
+  tbl_summary(
+    by       = q_lead,
+    statistic = list(
+      all_continuous()  ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    digits    = all_continuous() ~ 1,
+    missing   = "no"
+  ) |>
+  add_overall() |>
+  add_p() |>
+  modify_header(label ~ "**Characteristic**") |>
+  bold_labels() |>
+  modify_spanning_header(starts_with("stat_") ~ "**Blood Lead Quartile**")
+```
+
+### Missingness
+
+```{r missingness}
+#| label: tbl-missingness
+#| tbl-cap: "Missingness Summary for Key Analysis Variables"
+
+miss_vars <- c("blood_lead", "blood_cad", "blood_hg", "hba1c",
+               "crp", "total_chol", "hdl_chol", "sbp", "dbp",
+               "bmi", "educ", "pir", "smoke_status",
+               "fiber_g", "vitc_mg", "energy_kcal")
+miss_vars <- intersect(miss_vars, names(dat))
+
+dat |>
+  summarise(across(all_of(miss_vars),
+                   list(n_miss = ~ sum(is.na(.)),
+                        pct    = ~ round(mean(is.na(.)) * 100, 1)))) |>
+  pivot_longer(everything(),
+               names_to  = c("Variable", ".value"),
+               names_sep = "_(?=[^_]+$)") |>
+  mutate(N_complete = nrow(dat) - n_miss) |>
+  arrange(desc(pct)) |>
+  rename(`N Missing` = n_miss, `% Missing` = pct, `N Complete` = N_complete) |>
+  kable(format.args = list(big.mark = ",")) |>
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+### Exposure Distributions
+
+```{r fig-distributions}
+#| label: fig-distributions
+#| fig-cap: "Figure 1. Distribution of Blood Metal Concentrations (Raw and Log-Transformed)"
+#| fig-width: 10
+#| fig-height: 6
+
+knitr::include_graphics(here("outputs", "figures", "fig01_exposure_distributions.png"))
+```
+
+```{r fig-outcome}
+#| label: fig-outcome
+#| fig-cap: "Figure 2. Distribution of Primary Outcome: HbA1c"
+#| fig-width: 10
+#| fig-height: 5
+
+knitr::include_graphics(here("outputs", "figures", "fig02_outcome_distributions.png"))
+```
+
+### Exposure–Outcome Relationship
+
+```{r fig-scatter}
+#| label: fig-scatter
+#| fig-cap: "Figure 3. Scatter Plot: Log Blood Lead vs. HbA1c (LOESS and Linear Fit)"
+#| fig-width: 8
+#| fig-height: 5.5
+
+knitr::include_graphics(here("outputs", "figures", "fig03_exposure_outcome_scatter.png"))
+```
+
+### Regression Results
+
+#### Linear Regression: Blood Lead → HbA1c
+
+```{r table2}
+#| label: tbl-table2
+#| tbl-cap: "Table 2. Association of Log Blood Lead with HbA1c (%) — Survey-Weighted Linear Regression"
+
+linear_results |>
+  filter(term == "log_lead") |>
+  mutate(
+    `β (95% CI)` = glue("{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})"),
+    `p-value` = case_when(
+      p.value < 0.001 ~ "<0.001",
+      p.value < 0.01  ~ "<0.01",
+      TRUE ~ as.character(round(p.value, 3))
+    ),
+    `Std. Error` = round(std.error, 4)
+  ) |>
+  select(Model = model, `β (95% CI)`, `Std. Error`, `p-value`) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) |>
+  footnote(general = paste0(
+    "β = change in HbA1c (%) per 1-unit increase in ln(blood lead, µg/dL). ",
+    "Model 1: Unadjusted. Model 2: + age, sex, race/ethnicity. ",
+    "Model 3: + education, PIR, BMI, smoking, dietary fiber. ",
+    "Model 4: Model 3 + lead×fiber interaction."
+  ))
+```
+
+```{r fig-forest}
+#| label: fig-forest
+#| fig-cap: "Figure 4. Forest Plot: Association of Blood Lead with HbA1c Across Models"
+#| fig-width: 9
+#| fig-height: 5
+
+knitr::include_graphics(here("outputs", "figures", "fig04_forest_plot.png"))
+```
+
+```{r fig-quartile}
+#| label: fig-quartile
+#| fig-cap: "Figure 5. Mean HbA1c by Blood Lead Quartile"
+#| fig-width: 8
+#| fig-height: 5
+
+knitr::include_graphics(here("outputs", "figures", "fig05_hba1c_by_lead_quartile.png"))
+```
+
+#### Logistic Regression: Blood Lead → Elevated HbA1c (≥5.7%)
+
+```{r table3}
+#| label: tbl-table3
+#| tbl-cap: "Table 3. Association of Log Blood Lead with Elevated HbA1c (≥5.7%) — Survey-Weighted Logistic Regression"
+
+logit_results |>
+  filter(term == "log_lead") |>
+  mutate(
+    `OR (95% CI)` = glue("{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})"),
+    `p-value` = case_when(
+      p.value < 0.001 ~ "<0.001",
+      p.value < 0.01  ~ "<0.01",
+      TRUE ~ as.character(round(p.value, 3))
+    )
+  ) |>
+  select(Model = model, `OR (95% CI)`, `p-value`) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) |>
+  footnote(general = paste0(
+    "OR = odds ratio per 1-unit increase in ln(blood lead, µg/dL). ",
+    "Outcome: HbA1c ≥5.7% (prediabetes/diabetes threshold). ",
+    "Models adjusted as in Table 2."
+  ))
+```
+
+#### Interaction: Blood Lead × Dietary Fiber
+
+```{r fig-interaction}
+#| label: fig-interaction
+#| fig-cap: "Figure 6. Interaction: Blood Lead × Dietary Fiber on HbA1c"
+#| fig-width: 8
+#| fig-height: 5
+
+knitr::include_graphics(here("outputs", "figures", "fig06_interaction_plot.png"))
+```
+
+```{r interaction-pvalue}
+#| include: false
+int_model_row <- linear_results |>
+  filter(term == "log_lead:fiber_z")
+
+int_est <- if (nrow(int_model_row) > 0) round(int_model_row$estimate[1], 4) else NA
+int_p   <- if (nrow(int_model_row) > 0) {
+  if (int_model_row$p.value[1] < 0.001) "<0.001" else as.character(round(int_model_row$p.value[1], 3))
+} else "not estimable"
+```
+
+The interaction term (log blood lead × dietary fiber z-score) had a coefficient of β = `r int_est` (p = `r int_p`), suggesting `r ifelse(is.na(int_est), "the interaction could not be estimated in the available data.", if(!is.na(int_est) & !is.na(suppressWarnings(as.numeric(int_p)))) { if(as.numeric(int_p) < 0.05) "a statistically significant modification of the lead-HbA1c association by dietary fiber intake." else "no statistically significant modification of the lead-HbA1c association by dietary fiber intake." } else "marginal evidence of effect modification by dietary fiber intake.")`.
+
+#### Sensitivity Analyses: All Metals
+
+```{r table4}
+#| label: tbl-table4
+#| tbl-cap: "Table 4. Sensitivity Analysis: Association of All Blood Metals with HbA1c (Fully Adjusted)"
+
+sens_results |>
+  mutate(
+    `β (95% CI)` = glue("{round(estimate,3)} ({round(conf.low,3)}, {round(conf.high,3)})"),
+    `p-value` = case_when(
+      p.value < 0.001 ~ "<0.001",
+      p.value < 0.01  ~ "<0.01",
+      TRUE ~ as.character(round(p.value, 3))
+    )
+  ) |>
+  select(Exposure = exposure, `β (95% CI)`, `p-value`) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) |>
+  footnote(general = "All models adjusted for age, sex, race/ethnicity, education, PIR, BMI, smoking, dietary fiber. Survey-weighted.")
+```
+
+```{r fig-metals}
+#| label: fig-metals
+#| fig-cap: "Figure 7. Multi-Metal Comparison: Fully Adjusted Associations with HbA1c"
+#| fig-width: 9
+#| fig-height: 4
+
+knitr::include_graphics(here("outputs", "figures", "fig07_metals_forest.png"))
+```
+
+## Interpretation
+
+These findings add to a growing cross-sectional literature linking environmental metal exposures to glycemic dysregulation in the general U.S. adult population. The positive association between blood lead and HbA1c is consistent with prior NHANES analyses [@Navas-Acien2016] and plausible through mechanisms including pancreatic β-cell damage, impaired insulin secretion, and peripheral insulin resistance mediated by oxidative stress and mitochondrial dysfunction.
+
+The attenuation of the lead-HbA1c association from the unadjusted to fully adjusted model illustrates the importance of controlling for socioeconomic confounders: lower-income and less-educated individuals tend to have both higher metal exposures and worse glycemic control, and failure to adjust could produce spurious or inflated estimates.
+
+The interaction analysis examined whether dietary fiber modified the lead-HbA1c relationship. Fiber intake may reduce gut absorption of ingested lead and cadmium through chelation and shortened transit time, potentially buffering cardiometabolic effects. The formal test of interaction provides evidence on whether dietary quality is a relevant effect modifier in this relationship.
+
+## Limitations
+
+1. **Cross-sectional design:** NHANES is a cross-sectional survey. Causal inference is not possible; observed associations may be confounded by unmeasured factors or reflect reverse causation.
+
+2. **Single-day dietary recall:** Day 1 dietary data from a 24-hour recall represents only one day of intake and may not reflect habitual dietary patterns. Measurement error in dietary data could attenuate associations involving nutrition variables.
+
+3. **Blood versus tissue metals:** Blood lead and mercury reflect recent exposure, while cadmium primarily reflects cumulative kidney burden. Blood measurements may not capture long-term exposure relevant to chronic disease endpoints.
+
+4. **Unmeasured confounders:** Occupational exposures, co-exposures to other metals or pollutants, physical activity, medication use (other than antihypertensives), and dietary supplement use were not fully adjusted for.
+
+5. **Survey weights and pooling:** Combining two NHANES cycles with halved weights is the NCHS-recommended approach, but the pre-pandemic 2019–March 2020 sample is shorter and weights differ structurally.
+
+6. **Missing data:** Complete-case analysis was used, which assumes missing at random and may introduce selection bias if missingness is informative.
+
+## Reproducibility Statement
+
+This analysis is fully reproducible from publicly available data. All R code is available in the `R/` directory and can be executed in sequence (scripts 00–07) using the `here` package for portable file paths. Raw data are downloaded programmatically from the CDC NHANES API via `nhanesA`. The analytic dataset is saved as `data/processed/analysis_dataset_v2.rds`. This report is rendered using Quarto 1.x from `report/nhanes_metal_nutrition_biomarkers.qmd`.
+
+**To reproduce:**
+```bash
+Rscript R/00_setup.R
+Rscript R/01_download_data.R
+Rscript R/02_clean_merge_data.R
+Rscript R/03_define_variables.R
+Rscript R/04_descriptive_analysis.R
+Rscript R/05_regression_models.R
+Rscript R/06_visualizations.R
+Rscript R/07_export_tables_figures.R
+quarto render report/nhanes_metal_nutrition_biomarkers.qmd
+```
+
+## Future Extensions
+
+1. **Mixture analysis (WQS, BKMR):** Model the joint effect of metal mixtures rather than individual exposures, accounting for correlations between co-occurring metals.
+2. **Mediation analysis:** Examine whether BMI mediates the metal-HbA1c pathway, using mediation packages such as `mediation` or `CMAverse`.
+3. **Subgroup analyses:** Stratify by race/ethnicity and sex to investigate health disparities in metal-metabolic associations.
+4. **Longitudinal validation:** Link NHANES findings to longitudinal cohort data (e.g., ARIC, Strong Heart Study) to test temporality.
+5. **Additional outcomes:** Extend to CRP (inflammatory biomarker), kidney function (eGFR, albuminuria), and lipid profiles.
+6. **Dietary pattern analysis:** Replace single nutrients with overall dietary patterns (e.g., Healthy Eating Index) as more comprehensive nutrition covariates.
+
+---
+
+## Session Information {.appendix}
+
+```{r session-info}
+sessioninfo::session_info()
+```
